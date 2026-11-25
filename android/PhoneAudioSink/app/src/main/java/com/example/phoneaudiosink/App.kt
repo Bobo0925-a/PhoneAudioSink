@@ -9,6 +9,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         initSettings(this)
+        Str.attach(this)
         AppCompatDelegate.setDefaultNightMode(
             if (AppSettings.lightMode) AppCompatDelegate.MODE_NIGHT_NO
             else AppCompatDelegate.MODE_NIGHT_YES,

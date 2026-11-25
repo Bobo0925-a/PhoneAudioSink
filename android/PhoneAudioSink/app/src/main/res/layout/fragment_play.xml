@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="播放"
+            android:text="@string/tab_play"
             android:textColor="@color/text"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:text="连接电脑"
+                android:text="@string/play_mode_client"
                 android:textAllCaps="false"
                 android:textColor="@color/text"
                 android:backgroundTint="@color/accent"
@@ -46,7 +46,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:text="等待电脑连接"
+                android:text="@string/play_mode_server"
                 android:textAllCaps="false"
                 android:textColor="@color/text_dim"
                 android:backgroundTint="@color/surface3"
@@ -72,7 +72,7 @@
                     android:id="@+id/tvStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="未连接"
+                    android:text="@string/play_status_idle"
                     android:textColor="@color/text"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -82,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="等待扫描或手动输入 IP"
+                    android:text="@string/play_sub_idle"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -97,7 +97,7 @@
                     android:id="@+id/tvFormat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="格式 待协商"
+                    android:text="@string/play_format_pending"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -106,7 +106,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="缓冲 -"
+                    android:text="@string/play_buffer_none"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -115,7 +115,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="收到 0 帧"
+                    android:text="@string/play_frames_zero"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -134,7 +134,7 @@
                 android:layout_width="0dp"
                 android:layout_height="56dp"
                 android:layout_weight="1"
-                android:text="扫描电脑"
+                android:text="@string/play_btn_scan"
                 android:textAllCaps="false"
                 android:textColor="@color/text"
                 android:backgroundTint="@color/accent"
@@ -146,7 +146,7 @@
                 android:layout_height="56dp"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:text="断开"
+                android:text="@string/play_btn_disconnect"
                 android:textAllCaps="false"
                 android:textColor="@color/text"
                 android:backgroundTint="@color/surface3"
@@ -173,7 +173,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="正在扫描局域网 ..."
+                android:text="@string/play_loading_scan"
                 android:textColor="@color/text_dim"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -197,7 +197,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="手动连接"
+                    android:text="@string/play_manual_title"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -215,7 +215,7 @@
                         android:layout_height="52dp"
                         android:layout_weight="1"
                         android:background="@drawable/field_bg"
-                        android:hint="电脑 IP，如 192.168.1.50"
+                        android:hint="@string/play_ip_hint"
                         android:inputType="text"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
@@ -229,7 +229,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="52dp"
                         android:layout_marginStart="10dp"
-                        android:text="连接"
+                        android:text="@string/play_btn_connect"
                         android:textAllCaps="false"
                         android:textColor="@color/text"
                         android:backgroundTint="@color/accent"
@@ -241,7 +241,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="上次连接 -"
+                    android:text="@string/play_last_ip_none"
                     android:textColor="@color/text_dim"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -254,7 +254,7 @@
             android:layout_marginTop="18dp"
             android:layout_marginBottom="8dp"
             android:paddingStart="4dp"
-            android:text="可用电脑"
+            android:text="@string/play_servers_title"
             android:textColor="@color/text_dim"
             android:textSize="13sp" />
 

@@ -103,16 +103,19 @@ class NetClient(
                 s.connect(java.net.InetSocketAddress(host, port), 3000)
                 socket = s
                 AppSettings.setLastIp(host)
-                callbacks.onState(State.CONNECTED, "已连接 $host:$port")
+                callbacks.onState(State.CONNECTED, Str.s(R.string.net_connected, host, port))
                 ioLoop(s)
             } catch (e: Exception) {
-                Log.w(TAG, "连接失败: $e")
-                callbacks.onState(State.ERROR, "连接失败: ${e.message ?: "网络不可达"}")
+                Log.w(TAG, "connect failed: $e")
+                callbacks.onState(
+                    State.ERROR,
+                    Str.s(R.string.net_connect_failed, e.message ?: Str.s(R.string.net_unreachable)),
+                )
             } finally {
                 cleanup()
                 if (running) {
                     running = false
-                    callbacks.onState(State.IDLE, "连接已断开")
+                    callbacks.onState(State.IDLE, Str.s(R.string.net_disconnected))
                 }
             }
         }.also { it.start() }
@@ -134,7 +137,7 @@ class NetClient(
                     bind(InetSocketAddress(port))
                 }
                 serverSocket = server
-                callbacks.onState(State.SCANNING, "等待电脑连接 · 端口 $port")
+                callbacks.onState(State.SCANNING, Str.s(R.string.net_listening, port))
                 while (running) {
                     val s = try {
                         server.accept()
@@ -149,7 +152,7 @@ class NetClient(
                     }
                     currentHost = s.inetAddress?.hostAddress ?: ""
                     AppSettings.setLastIp(currentHost)
-                    callbacks.onState(State.CONNECTED, "电脑已接入 $currentHost")
+                    callbacks.onState(State.CONNECTED, Str.s(R.string.net_pc_joined, currentHost))
                     ioLoop(s)
                     try {
                         s.close()
@@ -157,12 +160,15 @@ class NetClient(
                     }
                     socket = null
                     if (running) {
-                        callbacks.onState(State.SCANNING, "等待电脑连接 · 端口 $port")
+                        callbacks.onState(State.SCANNING, Str.s(R.string.net_listening, port))
                     }
                 }
             } catch (e: Exception) {
-                Log.w(TAG, "监听失败: $e")
-                callbacks.onState(State.ERROR, "监听失败: ${e.message ?: "端口被占用"}")
+                Log.w(TAG, "listen failed: $e")
+                callbacks.onState(
+                    State.ERROR,
+                    Str.s(R.string.net_listen_failed, e.message ?: Str.s(R.string.net_port_busy)),
+                )
             } finally {
                 try {
                     server?.close()
@@ -172,7 +178,7 @@ class NetClient(
                 cleanup()
                 if (running) {
                     running = false
-                    callbacks.onState(State.IDLE, "监听已停止")
+                    callbacks.onState(State.IDLE, Str.s(R.string.net_listen_stopped))
                 }
             }
         }.also { it.start() }
@@ -193,7 +199,7 @@ class NetClient(
                 input.read(buf)
             } catch (_: SocketTimeoutException) {
                 Log.w(TAG, "链路超时，主动断开")
-                callbacks.onState(State.ERROR, "链路超时，请重连")
+                callbacks.onState(State.ERROR, Str.s(R.string.net_timeout))
                 break
             } catch (e: Exception) {
                 Log.w(TAG, "读取异常: $e")

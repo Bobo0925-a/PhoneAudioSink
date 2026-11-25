@@ -12,8 +12,8 @@ object AudioHub {
 
     data class HubState(
         val status: NetClient.State = NetClient.State.IDLE,
-        val detail: String = "未连接",
-        val format: String = "格式 待协商",
+        val detail: String = Str.s(R.string.play_status_idle),
+        val format: String = Str.s(R.string.play_format_pending),
         val bufferMs: Int = 0,
         val dropped: Int = 0,
         val frames: Int = 0,
@@ -52,8 +52,10 @@ object AudioHub {
         }
 
         override fun onHello(info: Protocol.HelloInfo) {
-            val text = "格式 ${info.sampleRate}Hz · ${info.channels}声道 · " +
-                    "Opus · ${info.frameSize} 帧 · ${info.bitrate / 1000}kbps"
+            val text = Str.s(
+                R.string.format_detail,
+                info.sampleRate, info.channels, info.frameSize, info.bitrate / 1000,
+            )
             publish(format = text)
         }
 
@@ -113,7 +115,7 @@ object AudioHub {
     fun disconnect() {
         wantConnected = false
         client.disconnect()
-        publish(state = NetClient.State.IDLE, detail = "已断开")
+        publish(state = NetClient.State.IDLE, detail = Str.s(R.string.state_disconnected))
     }
 
     fun scan(timeoutMs: Int = 2500): List<ServerInfo> =

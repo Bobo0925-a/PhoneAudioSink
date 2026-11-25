@@ -31,9 +31,16 @@ WizardStyle=modern
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 DisableWelcomePage=no
+; 按系统语言自动选中安装界面语言，用户仍可在向导中切换
+ShowLanguageDialog=auto
 
 [Languages]
+Name: "chinesesimplified"; MessagesFile: "ChineseSimplified.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[CustomMessages]
+chinesesimplified.CreatingShortcuts=正在创建快捷方式…
+english.CreatingShortcuts=Creating shortcuts...
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

@@ -26,6 +26,7 @@ from app_core import (
     load_config,
     save_config,
 )
+from i18n import normalize, set_language, system_language, t
 
 # ---- 状态颜色（底图） ----
 _STATUS_COLOR = {
@@ -94,6 +95,7 @@ def _human_size(n: int) -> str:
 
 def main() -> None:
     cfg = load_config()
+    set_language(normalize(cfg.get("language") or system_language()))
     state = AppState(cfg)
     stop_event = threading.Event()
     _setup_logging(state)
@@ -120,13 +122,13 @@ def main() -> None:
         snap = state.snapshot()
 
         status_item = pystray.MenuItem(
-            f"状态：{snap['status_text']}", None, enabled=False)
+            t("tray2.status", status=snap["status_text"]), None, enabled=False)
         ip_item = pystray.MenuItem(
-            f"本机 IP：{snap['local_ip']}", None, enabled=False)
+            t("tray2.ip", ip=snap["local_ip"]), None, enabled=False)
         client_item = pystray.MenuItem(
-            f"手机：{snap['client_addr'] or '未连接'}", None, enabled=False)
+            t("tray2.phone", phone=snap["client_addr"] or t("peer.none")), None, enabled=False)
         stat_item = pystray.MenuItem(
-            f"已发送：{snap['frames_sent']} 帧 / {_human_size(snap['bytes_sent'])}",
+            t("tray2.sent", frames=snap["frames_sent"], size=_human_size(snap["bytes_sent"])),
             None, enabled=False)
 
         # 采集设备子菜单（用闭包工厂捕获设备名；pystray 回调只接受 0/1/2 个无默认形参）
@@ -144,9 +146,9 @@ def main() -> None:
             return _cb
 
         dev_items.append(pystray.MenuItem(
-            "默认设备",
+            t("device.default"),
             _on_select(""),
-            checked=lambda item: cur == "默认设备",
+            checked=lambda item: cur == t("device.default"),
             radio=True,
         ))
         for _idx, name in get_devices():
@@ -156,10 +158,10 @@ def main() -> None:
                 checked=_is_current(name),
                 radio=True,
             ))
-        device_menu = pystray.MenuItem("采集设备", pystray.Menu(*dev_items))
+        device_menu = pystray.MenuItem(t("tray2.devices"), pystray.Menu(*dev_items))
 
-        open_log = pystray.MenuItem("打开日志文件", _open_log)
-        quit_item = pystray.MenuItem("退出", _on_quit)
+        open_log = pystray.MenuItem(t("tray2.open_log"), _open_log)
+        quit_item = pystray.MenuItem(t("tray2.quit"), _on_quit)
 
         return pystray.Menu(
             status_item, ip_item, client_item, stat_item,
@@ -171,7 +173,7 @@ def main() -> None:
         cfg["input_device"] = name
         save_config(cfg)
         state.request_device(name)
-        logging.getLogger("tray").info("采集设备切换为: %s", name or "默认设备")
+        logging.getLogger("tray").info("采集设备切换为: %s", name or t("device.default"))
 
     def _open_log(icon, item) -> None:
         try:
@@ -187,7 +189,7 @@ def main() -> None:
     icon = pystray.Icon(
         "PhoneAudioSink",
         _make_icon(state.snapshot()["status"]),
-        "PC → 手机音频",
+        t("tray2.title"),
         build_menu(),
     )
 
@@ -196,12 +198,12 @@ def main() -> None:
         last_status = None
         while not stop_event.is_set():
             snap = state.snapshot()
-            icon.title = (
-                f"PC → 手机音频\n"
-                f"状态：{snap['status_text']}\n"
-                f"本机 IP：{snap['local_ip']}\n"
-                f"手机：{snap['client_addr'] or '未连接'}"
-            )
+            icon.title = "\n".join((
+                t("tray2.title"),
+                t("tray2.status", status=snap["status_text"]),
+                t("tray2.ip", ip=snap["local_ip"]),
+                t("tray2.phone", phone=snap["client_addr"] or t("peer.none")),
+            ))
             if snap["status"] != last_status:
                 icon.icon = _make_icon(snap["status"])
                 last_status = snap["status"]

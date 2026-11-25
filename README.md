@@ -9,6 +9,8 @@
 - 音效：App 内自带 **7 段 EQ + 场景预设 + 虚拟低音 + 低频增强 + 增益**（短窗 IIR，总延迟 <10ms）
 - 传输：局域网 **TCP**，**UDP 广播自动发现**，**心跳保活 + 读超时**防僵死链接
 - 音频：48kHz / 立体声 / Opus，20ms 帧，默认 64 kbps
+- 语言：**中英双语**。安装器默认跟随系统语言（也可在安装向导里手动选），
+  PC 窗口在「设置 → 界面语言」切换、手机 App 在「设置 → 语言」切换，改完立即生效
 
 ---
 
@@ -104,6 +106,9 @@ new-chat-1/
 从 [Releases](https://github.com/Bobo0925-a/PhoneAudioSink/releases) 下载
 `PhoneAudioSink-android.apk`（Android 7.0+，release 签名包），
 传到手机安装，允许「安装未知来源应用」。
+
+界面语言默认跟随系统，可在 App 内「设置 → 语言」选择 **跟随系统 / 简体中文 / English**，
+点选后界面即时重建为对应语言。
 
 ### 3. 启动 PC 端（二选一）
 
@@ -318,6 +323,11 @@ python -m PyInstaller --noconfirm --clean PhoneAudioSink.spec
 
 安装器按当前用户装到 `%LOCALAPPDATA%\Programs\PhoneAudioSink`，带开始菜单快捷方式、
 可选桌面图标与卸载项，不需要管理员权限。
+
+安装向导内置 **简体中文 / English** 两套语言：`ShowLanguageDialog=auto` 按系统语言自动预选，
+也可在向导首页手动改。中文包用 Inno 官方仓库之外的社区翻译文件
+`installers\ChineseSimplified.isl`（**必须保持 UTF-8 with BOM**，否则 Inno 不识别语言名）。
+静默安装可指定：`PhoneAudioSink-setup.exe /VERYSILENT /LANG=chinesesimplified`。
 
 ---
 

@@ -15,7 +15,8 @@ class AboutFragment : Fragment(R.layout.fragment_about) {
         } catch (e: Exception) {
             "2.0"
         }
-        view.findViewById<TextView>(R.id.tvVersion).text = "PhoneAudioSink $version"
+        view.findViewById<TextView>(R.id.tvVersion).text =
+            getString(R.string.about_version, version)
         Motion.enterChildren(view)
     }
 }

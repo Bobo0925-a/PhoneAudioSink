@@ -54,8 +54,8 @@ class EffectsFragment : Fragment(R.layout.fragment_effects) {
         view.findViewById<MaterialButton>(R.id.btnSavePreset).setOnClickListener {
             EffectSettings.save()
             val hint = view.findViewById<TextView>(R.id.tvEqHint)
-            hint.text = "已保存当前音效参数"
-            hint.postDelayed({ hint.text = "上下拖动频柱调节，范围 -12 ~ +12 dB" }, 1600)
+            hint.text = getString(R.string.effects_eq_saved)
+            hint.postDelayed({ hint.text = getString(R.string.effects_eq_hint) }, 1600)
         }
         Motion.pressable(
             view.findViewById(R.id.btnResetEq),
@@ -70,7 +70,7 @@ class EffectsFragment : Fragment(R.layout.fragment_effects) {
         presetRow.removeAllViews()
         presetButtons.clear()
         val dp = resources.displayMetrics.density
-        val labels = EffectSettings.PRESETS
+        val labels = EffectSettings.presetLabels()
         for (id in 1 until labels.size) {
             val btn = MaterialButton(requireContext()).apply {
                 text = labels[id]

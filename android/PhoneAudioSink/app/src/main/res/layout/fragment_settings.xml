@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="设置"
+            android:text="@string/settings_title"
             android:textColor="@color/text"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -39,7 +39,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="缓冲档位"
+                    android:text="@string/settings_buffer_title"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="越低越实时，越高越抗抖动"
+                    android:text="@string/settings_buffer_desc"
                     android:textColor="@color/text_dim"
                     android:textSize="12sp" />
 
@@ -64,7 +64,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="当前 250 ms（平衡）"
+                    android:text="@string/settings_buffer_250"
                     android:textColor="@color/text_dim"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -100,7 +100,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="浅色模式"
+                            android:text="@string/settings_light"
                             android:textColor="@color/text"
                             android:textSize="15sp" />
 
@@ -108,7 +108,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="深色为默认主题"
+                            android:text="@string/settings_light_desc"
                             android:textColor="@color/text_dim"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -137,7 +137,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="自动重连"
+                        android:text="@string/settings_auto"
                         android:textColor="@color/text"
                         android:textSize="15sp" />
 
@@ -165,7 +165,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="链路心跳保活"
+                        android:text="@string/settings_heartbeat"
                         android:textColor="@color/text"
                         android:textSize="15sp" />
 
@@ -180,7 +180,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="6 秒无数据自动断开，避免僵死连接持续堆积音频"
+                    android:text="@string/settings_heartbeat_desc"
                     android:textColor="@color/text_dim"
                     android:textSize="12sp" />
 
@@ -206,7 +206,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="减弱动态效果"
+                            android:text="@string/settings_reduce_motion"
                             android:textColor="@color/text"
                             android:textSize="15sp" />
 
@@ -214,7 +214,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="关闭入场与转场动画，仅保留即时反馈"
+                            android:text="@string/settings_reduce_motion_desc"
                             android:textColor="@color/text_dim"
                             android:textSize="12sp" />
                     </LinearLayout>
@@ -228,13 +228,53 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_language_title"
+                    android:textColor="@color/text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/settings_language_desc"
+                    android:textColor="@color/text_dim"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:id="@+id/languageRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRestoreDefaults"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="14dp"
-            android:text="恢复默认设置"
+            android:text="@string/settings_restore"
             android:textAllCaps="false"
             android:textColor="@color/text"
             app:cornerRadius="16dp"

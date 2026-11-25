@@ -76,7 +76,7 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
         tvServerTitle = view.findViewById(R.id.tvServerTitle)
 
         val last = AppSettings.lastIp
-        tvLastIp.text = if (last.isBlank()) "上次连接 -" else "上次连接 $last"
+        tvLastIp.text = if (last.isBlank()) getString(R.string.play_last_ip_none) else getString(R.string.play_last_ip, last)
 
         val l: (AudioHub.HubState) -> Unit = { render(it) }
         listener = l
@@ -123,40 +123,40 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
         btnModeServer.setTextColor(
             ContextCompat.getColor(ctx, if (serverMode) R.color.text else R.color.text_dim)
         )
-        btnScan.text = if (serverMode) "开始等待" else "扫描电脑"
+        btnScan.text = if (serverMode) getString(R.string.play_btn_wait_start) else getString(R.string.play_btn_scan)
         cardManual.visibility = if (serverMode) View.GONE else View.VISIBLE
         tvServerTitle.visibility = if (serverMode) View.GONE else View.VISIBLE
         skeletonList.visibility = View.GONE
         serverList.visibility = if (serverMode) View.GONE else View.VISIBLE
         if (serverMode) {
-            tvSub.text = "手机将监听端口 42101，等待电脑直连"
+            tvSub.text = getString(R.string.play_server_mode_tip)
         }
     }
 
     private fun startListening() {
         AudioHub.listen(42101)
-        showLoading(true, "正在等待电脑连接 ...")
-        tvSub.text = "正在等待电脑连接 ..."
+        showLoading(true, getString(R.string.play_waiting))
+        tvSub.text = getString(R.string.play_waiting)
         btnScan.isEnabled = false
-        btnScan.text = "正在等待"
+        btnScan.text = getString(R.string.play_btn_waiting)
     }
 
     /** 手动 IP 连接：先做格式校验，再进入加载态。 */
     private fun connectByIp() {
         val ip = etIp.text.toString().trim()
         if (ip.isBlank()) {
-            showFieldError("请输入电脑 IP 地址")
+            showFieldError(getString(R.string.play_ip_required))
             return
         }
         if (!ipPattern.matches(ip)) {
-            showFieldError("IP 格式不正确，示例 192.168.1.50")
+            showFieldError(getString(R.string.play_ip_invalid))
             return
         }
         etIp.setBackgroundResource(R.drawable.field_bg_ok)
         tvSub.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_dim))
-        showLoading(true, "正在连接 $ip ...")
+        showLoading(true, getString(R.string.play_connecting, ip))
         btnConnectIp.isEnabled = false
-        btnConnectIp.text = "连接中"
+        btnConnectIp.text = getString(R.string.play_btn_connecting)
         AudioHub.connect(ip)
         etIp.postDelayed({
             if (isAdded) etIp.setBackgroundResource(R.drawable.field_bg)
@@ -193,10 +193,10 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
 
     private fun render(state: AudioHub.HubState) {
         tvStatus.text = when (state.status) {
-            NetClient.State.CONNECTED -> "已连接"
-            NetClient.State.SCANNING -> if (serverMode) "等待电脑" else "扫描中"
-            NetClient.State.ERROR -> "连接异常"
-            NetClient.State.IDLE -> "未连接"
+            NetClient.State.CONNECTED -> getString(R.string.play_state_connected)
+            NetClient.State.SCANNING -> if (serverMode) getString(R.string.play_state_waiting) else getString(R.string.play_state_scanning)
+            NetClient.State.ERROR -> getString(R.string.play_state_error)
+            NetClient.State.IDLE -> getString(R.string.play_state_idle)
         }
         tvStatus.setTextColor(
             ContextCompat.getColor(
@@ -216,44 +216,44 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
             ),
         )
         tvFormat.text = state.format
-        tvBuffer.text = if (state.bufferMs > 0) "缓冲 ${state.bufferMs} ms" else "缓冲 -"
+        tvBuffer.text = if (state.bufferMs > 0) getString(R.string.play_buffer_ms, state.bufferMs) else getString(R.string.play_buffer_none)
         tvStats.text = buildString {
-            append("收到 ${state.frames} 帧")
-            if (state.dropped > 0) append("　追平丢弃 ${state.dropped} 块")
+            append(getString(R.string.play_frames_received, state.frames))
+            if (state.dropped > 0) append(getString(R.string.play_dropped, state.dropped))
         }
 
         // 按钮三态：空闲 / 加载中 / 结果
         when (state.status) {
             NetClient.State.CONNECTED -> {
                 btnConnectIp.isEnabled = true
-                btnConnectIp.text = "连接"
+                btnConnectIp.text = getString(R.string.play_btn_connect)
                 btnScan.isEnabled = serverMode.not()
-                btnScan.text = if (serverMode) "正在等待" else "扫描电脑"
+                btnScan.text = if (serverMode) getString(R.string.play_btn_waiting) else getString(R.string.play_btn_scan)
                 showLoading(false)
             }
 
             NetClient.State.SCANNING -> {
                 btnScan.isEnabled = false
-                btnScan.text = if (serverMode) "正在等待" else "扫描中"
+                btnScan.text = if (serverMode) getString(R.string.play_btn_waiting) else getString(R.string.play_btn_scanning)
                 if (serverMode) {
-                    showLoading(true, "正在等待电脑连接 ...")
+                    showLoading(true, getString(R.string.play_waiting))
                 }
             }
 
             NetClient.State.ERROR -> {
                 btnConnectIp.isEnabled = true
-                btnConnectIp.text = "连接"
+                btnConnectIp.text = getString(R.string.play_btn_connect)
                 btnScan.isEnabled = serverMode.not() && !scanning
-                btnScan.text = if (serverMode) "开始等待" else "扫描电脑"
+                btnScan.text = if (serverMode) getString(R.string.play_btn_wait_start) else getString(R.string.play_btn_scan)
                 showLoading(false)
             }
 
             NetClient.State.IDLE -> {
                 btnConnectIp.isEnabled = true
-                btnConnectIp.text = "连接"
+                btnConnectIp.text = getString(R.string.play_btn_connect)
                 if (!scanning) {
                     btnScan.isEnabled = true
-                    btnScan.text = if (serverMode) "开始等待" else "扫描电脑"
+                    btnScan.text = if (serverMode) getString(R.string.play_btn_wait_start) else getString(R.string.play_btn_scan)
                     showLoading(false)
                 }
             }
@@ -261,15 +261,15 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
 
         if (state.status == NetClient.State.CONNECTED) {
             val last = AppSettings.lastIp
-            if (last.isNotBlank()) tvLastIp.text = "上次连接 $last"
+            if (last.isNotBlank()) tvLastIp.text = getString(R.string.play_last_ip, last)
         }
     }
 
     private fun startScan() {
         scanning = true
         btnScan.isEnabled = false
-        btnScan.text = "扫描中"
-        showLoading(true, "正在扫描局域网 ...")
+        btnScan.text = getString(R.string.play_btn_scanning)
+        showLoading(true, getString(R.string.play_loading_scan))
         // 骨架屏先占位，避免列表区域空着像卡死
         skeletonList.visibility = View.VISIBLE
         Motion.fadeIn(skeletonList)
@@ -283,13 +283,13 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
                 skeletonList.visibility = View.GONE
                 serverList.visibility = View.VISIBLE
                 btnScan.isEnabled = true
-                btnScan.text = if (serverMode) "开始等待" else "扫描电脑"
+                btnScan.text = if (serverMode) getString(R.string.play_btn_wait_start) else getString(R.string.play_btn_scan)
                 showLoading(false)
                 renderServers(servers)
                 if (servers.isEmpty()) {
-                    tvSub.text = "未发现电脑，请确认 PC 端已运行并放行防火墙"
+                    tvSub.text = getString(R.string.play_no_servers)
                 } else {
-                    tvSub.text = "发现 ${servers.size} 台电脑，点击列表连接"
+                    tvSub.text = getString(R.string.play_servers_found, servers.size)
                 }
                 tvSub.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_dim))
             }
@@ -315,7 +315,7 @@ class PlayFragment : Fragment(R.layout.fragment_play) {
                 ).apply { topMargin = (10 * dp).toInt() }
                 setOnClickListener {
                     AudioHub.connect(info.host, info.port)
-                    showLoading(true, "正在连接 ${info.host} ...")
+                    showLoading(true, getString(R.string.play_connecting, info.host))
                 }
             }
             serverList.addView(btn)

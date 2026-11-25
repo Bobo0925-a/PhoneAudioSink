@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PhoneAudioSink</string>
+
+    <!-- Bottom tabs -->
+    <string name="tab_play">Play</string>
+    <string name="tab_effects">Effects</string>
+    <string name="tab_settings">Settings</string>
+    <string name="tab_about">About</string>
+
+    <!-- Play page -->
+    <string name="play_mode_client">Connect to PC</string>
+    <string name="play_mode_server">Wait for PC</string>
+    <string name="play_status_idle">Not connected</string>
+    <string name="play_sub_idle">Scan the network or type an IP</string>
+    <string name="play_format_pending">Format  pending</string>
+    <string name="play_buffer_none">Buffer -</string>
+    <string name="play_frames_zero">0 frames received</string>
+    <string name="play_btn_scan">Scan for PCs</string>
+    <string name="play_btn_disconnect">Disconnect</string>
+    <string name="play_loading_scan">Scanning the local network ...</string>
+    <string name="play_manual_title">Connect manually</string>
+    <string name="play_ip_hint">PC IP, e.g. 192.168.1.50</string>
+    <string name="play_btn_connect">Connect</string>
+    <string name="play_last_ip_none">Last used -</string>
+    <string name="play_last_ip">Last used %1$s</string>
+    <string name="play_servers_title">Available PCs</string>
+    <string name="play_server_mode_tip">The phone listens on port 42101 and waits for the PC to connect</string>
+    <string name="play_waiting">Waiting for the PC to connect ...</string>
+    <string name="play_btn_wait_start">Start waiting</string>
+    <string name="play_btn_waiting">Waiting</string>
+    <string name="play_btn_scanning">Scanning</string>
+    <string name="play_ip_required">Enter the PC IP address</string>
+    <string name="play_ip_invalid">Invalid IP format, e.g. 192.168.1.50</string>
+    <string name="play_connecting">Connecting to %1$s ...</string>
+    <string name="play_btn_connecting">Connecting</string>
+    <string name="play_state_connected">Connected</string>
+    <string name="play_state_waiting">Waiting for PC</string>
+    <string name="play_state_scanning">Scanning</string>
+    <string name="play_state_error">Connection error</string>
+    <string name="play_state_idle">Not connected</string>
+    <string name="play_buffer_ms">Buffer %1$d ms</string>
+    <string name="play_frames_received">%1$d frames received</string>
+    <string name="play_dropped"> · dropped %1$d blocks</string>
+    <string name="play_no_servers">No PC found. Make sure the desktop app is running and allowed through the firewall.</string>
+    <string name="play_servers_found">%1$d PCs found, tap one to connect</string>
+
+    <!-- Effects page -->
+    <string name="effects_title">Effects</string>
+    <string name="effects_preset_title">Presets</string>
+    <string name="effects_save">Save</string>
+    <string name="effects_reset">Reset</string>
+    <string name="effects_eq_title">Graphic EQ</string>
+    <string name="effects_eq_hint">Drag a band up or down, range -12 to +12 dB</string>
+    <string name="effects_eq_saved">Current settings saved</string>
+    <string name="effects_virtual_bass">Virtual bass</string>
+    <string name="effects_bass_boost">Bass boost</string>
+    <string name="effects_gain_title">Output gain</string>
+    <string name="effects_gain_tip">Soft limiting kicks in above 0 dB to prevent clipping</string>
+
+    <!-- Presets -->
+    <string name="preset_custom">Custom</string>
+    <string name="preset_electronic">Electronic</string>
+    <string name="preset_vocal">Vocal</string>
+    <string name="preset_clear">Crisp</string>
+    <string name="preset_strings">Strings</string>
+
+    <!-- Settings page -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_buffer_title">Buffer size</string>
+    <string name="settings_buffer_desc">Lower is more immediate, higher resists jitter</string>
+    <string name="settings_buffer_120">Current 120 ms (low latency, prone to crackle on weak Wi-Fi)</string>
+    <string name="settings_buffer_250">Current 250 ms (balanced)</string>
+    <string name="settings_buffer_400">Current 400 ms (jitter resistant, slightly higher latency)</string>
+    <string name="buffer_label_120">120 low</string>
+    <string name="buffer_label_250">250 balanced</string>
+    <string name="buffer_label_400">400 stable</string>
+    <string name="settings_light">Light theme</string>
+    <string name="settings_light_desc">Dark is the default theme</string>
+    <string name="settings_auto">Auto reconnect</string>
+    <string name="settings_heartbeat">Link heartbeat</string>
+    <string name="settings_heartbeat_desc">Drop the link after 6 s of silence so a dead session cannot pile up audio</string>
+    <string name="settings_reduce_motion">Reduce motion</string>
+    <string name="settings_reduce_motion_desc">Disable entrance and transition animations, keeping instant feedback only</string>
+    <string name="settings_restore">Restore defaults</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_desc">UI language, applied immediately</string>
+    <string name="lang_system">System default</string>
+    <string name="lang_zh">简体中文</string>
+    <string name="lang_en">English</string>
+
+    <!-- About page -->
+    <string name="about_title">About</string>
+    <string name="about_version">PhoneAudioSink %1$s</string>
+    <string name="about_desc">Streams PC audio to your phone over the local network, with built-in low-latency processing.</string>
+    <string name="about_transport">Transport  TCP 42101　Discovery  UDP 42100</string>
+    <string name="about_codec">Codec  Opus 48 kHz stereo, 20 ms frames</string>
+    <string name="about_effects">Effects  In-app DSP, bypasses the system effect chain</string>
+    <string name="about_steps_title">Getting started</string>
+    <string name="about_step1">1  Start the desktop tray app and allow it through the firewall</string>
+    <string name="about_step2">2  Join the same Wi-Fi on both devices</string>
+    <string name="about_step3">3  Scan for a PC on the Play page, or type its IP</string>
+
+    <!-- Network state -->
+    <string name="net_connected">Connected %1$s:%2$d</string>
+    <string name="net_connect_failed">Connection failed: %1$s</string>
+    <string name="net_unreachable">network unreachable</string>
+    <string name="net_disconnected">Disconnected</string>
+    <string name="net_listening">Waiting for the PC · port %1$d</string>
+    <string name="net_pc_joined">PC joined %1$s</string>
+    <string name="net_listen_failed">Listen failed: %1$s</string>
+    <string name="net_port_busy">port already in use</string>
+    <string name="net_listen_stopped">Listening stopped</string>
+    <string name="net_timeout">Link timed out, please reconnect</string>
+    <string name="state_disconnected">Disconnected</string>
+    <string name="format_detail">Format %1$dHz · %2$d ch · Opus · %3$d samples · %4$dkbps</string>
+</resources>

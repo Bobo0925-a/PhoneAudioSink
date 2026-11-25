@@ -19,6 +19,7 @@ import numpy as np
 
 import protocol
 from audio_capture import AudioCapture
+from i18n import t
 from net_link import DiscoveryResponder, TcpServer, local_ip
 from opus_encoder import OpusEncoder
 
@@ -28,12 +29,18 @@ CONNECTED = "connected"  # 已连接，正在推流
 ERROR = "error"          # 最近一次连接/传输出错
 STOPPING = "stopping"    # 正在退出
 
-STATUS_TEXT = {
-    IDLE: "等待连接",
-    CONNECTED: "正在推流",
-    ERROR: "连接异常",
-    STOPPING: "正在停止",
+STATUS_KEYS = {
+    IDLE: "status.idle",
+    CONNECTED: "status.connected",
+    ERROR: "status.error",
+    STOPPING: "status.stopping",
 }
+
+
+def status_text(status: str) -> str:
+    """状态对应的界面文案，随当前语言变化。"""
+    key = STATUS_KEYS.get(status)
+    return t(key) if key else status
 
 DEFAULT_CONFIG = {
     "tcp_port": 42101,
@@ -48,6 +55,7 @@ DEFAULT_CONFIG = {
     "volume": 1.0,
     "show_window_on_start": True,
     "reduce_motion": False,
+    "language": "",          # 空 = 跟随系统区域，见 i18n.system_language()
 }
 
 logger = logging.getLogger("core")
@@ -162,10 +170,10 @@ class AppState:
         with self._lock:
             return {
                 "status": self.status,
-                "status_text": STATUS_TEXT.get(self.status, self.status),
+                "status_text": status_text(self.status),
                 "local_ip": self.local_ip,
                 "client_addr": self.client_addr,
-                "device_name": self.device_name or "默认设备",
+                "device_name": self.device_name or t("device.default"),
                 "frames_sent": self.frames_sent,
                 "bytes_sent": self.bytes_sent,
                 "dropped_blocks": self.dropped_blocks,
@@ -325,7 +333,7 @@ class Worker(threading.Thread):
         self.state.set_status(
             CONNECTED,
             client_addr=addr_text,
-            device_name=self.cfg.get("input_device") or "默认设备",
+            device_name=self.cfg.get("input_device") or t("device.default"),
             last_error="",
         )
         logger.info("已连接 %s，发送 HELLO: %dHz / %d声道 / Opus / 帧长 %d / %d bps",

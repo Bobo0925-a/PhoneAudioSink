@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="音效"
+            android:text="@string/effects_title"
             android:textColor="@color/text"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -39,7 +39,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="场景预设"
+                    android:text="@string/effects_preset_title"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -63,7 +63,7 @@
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:text="保存当前"
+                        android:text="@string/effects_save"
                         android:textAllCaps="false"
                         android:textColor="@color/text"
                         app:cornerRadius="16dp"
@@ -76,7 +76,7 @@
                         android:layout_height="48dp"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:text="重置"
+                        android:text="@string/effects_reset"
                         android:textAllCaps="false"
                         android:textColor="@color/text"
                         app:cornerRadius="16dp"
@@ -103,7 +103,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="图示均衡"
+                    android:text="@string/effects_eq_title"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -113,7 +113,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="上下拖动频柱调节，范围 -12 ~ +12 dB"
+                    android:text="@string/effects_eq_hint"
                     android:textColor="@color/text_dim"
                     android:textSize="12sp" />
 
@@ -150,7 +150,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="虚拟低音"
+                        android:text="@string/effects_virtual_bass"
                         android:textColor="@color/text"
                         android:textSize="15sp" />
 
@@ -172,7 +172,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="低频增强"
+                        android:text="@string/effects_bass_boost"
                         android:textColor="@color/text"
                         android:textSize="15sp" />
 
@@ -203,7 +203,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="输出增益"
+                        android:text="@string/effects_gain_title"
                         android:textColor="@color/text"
                         android:textSize="15sp" />
 
@@ -227,7 +227,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="增益超过 0 dB 时自动启用软限幅，防止破音"
+                    android:text="@string/effects_gain_tip"
                     android:textColor="@color/text_dim"
                     android:textSize="12sp" />
             </LinearLayout>

@@ -1,11 +1,15 @@
 package com.example.phoneaudiosink
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-/** 主界面：底部四页 Tab（播放 / 音效 / 设置 / 关于）。 */
+/**
+ * 主界面：底部四页 Tab（播放 / 音效 / 设置 / 关于）。
+ * 这里覆盖 attachBaseContext 让应用内选定的语言生效（早于资源加载）。
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNav: BottomNavigationView
@@ -14,6 +18,10 @@ class MainActivity : AppCompatActivity() {
     private val effectsFragment = EffectsFragment()
     private val settingsFragment = SettingsFragment()
     private val aboutFragment = AboutFragment()
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

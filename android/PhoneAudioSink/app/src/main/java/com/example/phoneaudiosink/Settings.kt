@@ -35,9 +35,17 @@ object EffectSettings {
     @Volatile var version = 0
         private set
 
-    val PRESETS = arrayOf(
-        "自定义", "电子音乐", "人声", "清脆", "弦乐",
+    /** 第 0 项是「自定义」，界面上只展示 1..n。 */
+    private val PRESET_RES = intArrayOf(
+        R.string.preset_custom,
+        R.string.preset_electronic,
+        R.string.preset_vocal,
+        R.string.preset_clear,
+        R.string.preset_strings,
     )
+
+    /** 预设名称随当前语言从资源取，不要缓存成常量。 */
+    fun presetLabels(): Array<String> = PRESET_RES.map { Str.s(it) }.toTypedArray()
 
     private val PRESET_GAINS = arrayOf(
         intArrayOf(0, 0, 0, 0, 0, 0, 0),
@@ -110,7 +118,7 @@ object EffectSettings {
     }
 
     fun applyPreset(id: Int) {
-        if (id !in PRESETS.indices) return
+        if (id !in PRESET_RES.indices) return
         presetId = id
         setEqGains(PRESET_GAINS[id].copyOf())
         version++
@@ -142,9 +150,14 @@ object AppSettings {
     private const val KEY_LAST_IP = "last_ip"
     private const val KEY_SERVER_MODE = "server_mode"
     private const val KEY_REDUCE_MOTION = "reduce_motion"
+    private const val KEY_LANGUAGE = "language"
 
     val BUFFER_TIERS = intArrayOf(120, 250, 400)
-    val BUFFER_LABELS = arrayOf("120 低延迟", "250 平衡", "400 抗抖动")
+    private val BUFFER_RES = intArrayOf(
+        R.string.buffer_label_120, R.string.buffer_label_250, R.string.buffer_label_400,
+    )
+
+    fun bufferLabels(): Array<String> = BUFFER_RES.map { Str.s(it) }.toTypedArray()
 
     @Volatile var bufferMs = 250
         private set
@@ -162,6 +175,9 @@ object AppSettings {
     /** 减弱动态效果（与系统无障碍设置叠加生效）。 */
     @Volatile var reduceMotion = false
         private set
+    /** 界面语言：空 = 跟随系统，否则 "zh" / "en"。 */
+    @Volatile var language = ""
+        private set
 
     fun load() {
         bufferMs = prefs.getInt(KEY_BUFFER_MS, 250)
@@ -171,6 +187,12 @@ object AppSettings {
         lastIp = prefs.getString(KEY_LAST_IP, "") ?: ""
         serverMode = prefs.getBoolean(KEY_SERVER_MODE, false)
         reduceMotion = prefs.getBoolean(KEY_REDUCE_MOTION, false)
+        language = prefs.getString(KEY_LANGUAGE, "") ?: ""
+    }
+
+    fun setLanguage(tag: String) {
+        language = tag
+        prefs.edit().putString(KEY_LANGUAGE, tag).apply()
     }
 
     fun setReduceMotion(on: Boolean) {

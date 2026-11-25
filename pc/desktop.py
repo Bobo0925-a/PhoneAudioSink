@@ -31,7 +31,10 @@ from PyQt5.QtWidgets import (
 )
 
 from app_core import (
-    AppState, Worker, app_dir, list_input_devices, load_config, save_config,
+    AppState, Worker, app_dir, list_input_devices, load_config, save_config, status_text,
+)
+from i18n import (
+    LANGUAGE_NAMES, SUPPORTED, current_language, normalize, set_language, system_language, t,
 )
 
 # ---------------- 配色 ----------------
@@ -472,6 +475,10 @@ class MainWindow(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.cfg = load_config()
+        # 语言优先级：配置文件 > 系统区域 > 中文
+        lang = normalize(self.cfg.get("language") or system_language())
+        self.cfg["language"] = lang
+        set_language(lang)
         self._sync_motion_flag()
         self.state = AppState(self.cfg)
         self.stop_event: threading.Event | None = None
@@ -517,11 +524,11 @@ class MainWindow(QWidget):
         side.setSpacing(6)
 
         self.nav_buttons: list[QPushButton] = []
-        for idx, (icon, label) in enumerate(
-            [(SVG_LINK, "连接"), (SVG_VOLUME, "音量"), (SVG_MIC, "采集设备"),
-             (SVG_LOG, "日志"), (SVG_GEAR, "设置")]
-        ):
-            btn = RippleButton(label)
+        self._nav_keys = ["nav.connect", "nav.volume", "nav.capture", "nav.log", "nav.settings"]
+        for idx, (icon, key) in enumerate(zip(
+            [SVG_LINK, SVG_VOLUME, SVG_MIC, SVG_LOG, SVG_GEAR], self._nav_keys
+        )):
+            btn = RippleButton(t(key))
             btn.setObjectName("navBtn")
             btn.setIcon(svg_icon(icon, 18))
             btn.setIconSize(QSize(18, 18))
@@ -534,9 +541,9 @@ class MainWindow(QWidget):
 
         side.addSpacing(14)
 
-        vol_title = QLabel("音量")
-        vol_title.setStyleSheet(f"color: {TEXT_DIM}; font-size: 12px; padding-left: 4px;")
-        side.addWidget(vol_title)
+        self.lbl_side_volume = QLabel(t("sidebar.volume"))
+        self.lbl_side_volume.setStyleSheet(f"color: {TEXT_DIM}; font-size: 12px; padding-left: 4px;")
+        side.addWidget(self.lbl_side_volume)
 
         vol_row = QHBoxLayout()
         vol_row.setContentsMargins(4, 0, 4, 0)
@@ -553,7 +560,7 @@ class MainWindow(QWidget):
 
         side.addStretch(1)
 
-        self.mode_hint = QLabel("模式：等待手机连入")
+        self.mode_hint = QLabel(t("mode.listen"))
         self.mode_hint.setWordWrap(True)
         self.mode_hint.setStyleSheet(f"color: {TEXT_DIM}; font-size: 12px; padding: 6px 4px;")
         side.addWidget(self.mode_hint)
@@ -611,17 +618,17 @@ class MainWindow(QWidget):
         lay.setSpacing(12)
 
         card, cl = self._card()
-        self.lbl_status = QLabel("等待连接")
+        self.lbl_status = QLabel(t("status.idle"))
         self.lbl_status.setStyleSheet(f"font-size: 26px; font-weight: 700; color: {TEXT};")
         cl.addWidget(self.lbl_status)
 
-        self.lbl_detail = self._dim("尚未开始推送")
+        self.lbl_detail = self._dim(t("detail.not_started"))
         cl.addWidget(self.lbl_detail)
 
-        self.lbl_ip = self._dim(f"本机 IP　{self.state.local_ip}")
+        self.lbl_ip = self._dim(t("detail.ip", ip=self.state.local_ip))
         cl.addWidget(self.lbl_ip)
 
-        self.lbl_stats = self._dim("已发送 0 帧")
+        self.lbl_stats = self._dim(t("detail.stats", frames=0, size="0 KB", dropped=0))
         cl.addWidget(self.lbl_stats)
 
         self.connect_bar = QProgressBar()
@@ -633,14 +640,15 @@ class MainWindow(QWidget):
         lay.addWidget(card)
 
         card2, cl2 = self._card()
-        cl2.addWidget(self._title("手动连接手机"))
+        self.title_connect = self._title(t("connect.title"))
+        cl2.addWidget(self.title_connect)
 
         mode_row = QHBoxLayout()
-        self.btn_mode_listen = RippleButton("等待手机连入")
+        self.btn_mode_listen = RippleButton(t("btn.listen"))
         self.btn_mode_listen.setObjectName("ghost")
         self.btn_mode_listen.setCheckable(True)
         self.btn_mode_listen.setChecked(True)
-        self.btn_mode_connect = RippleButton("直连手机")
+        self.btn_mode_connect = RippleButton(t("btn.connect"))
         self.btn_mode_connect.setObjectName("ghost")
         self.btn_mode_connect.setCheckable(True)
         for b in (self.btn_mode_listen, self.btn_mode_connect):
@@ -652,17 +660,18 @@ class MainWindow(QWidget):
 
         ip_row = QHBoxLayout()
         self.edit_ip = QLineEdit()
-        self.edit_ip.setPlaceholderText("手机 IP，如 192.168.1.15")
+        self.edit_ip.setPlaceholderText(t("placeholder.ip"))
         self.edit_ip.setText(str(self.cfg.get("last_phone_ip", "")))
         ip_row.addWidget(self.edit_ip, 1)
-        self.btn_start = RippleButton("开始")
+        self.btn_start = RippleButton(t("btn.start"))
         self.btn_start.setObjectName("primary")
         self.btn_start.setCursor(Qt.PointingHandCursor)
         self.btn_start.clicked.connect(self._toggle_engine)
         ip_row.addWidget(self.btn_start)
         cl2.addLayout(ip_row)
 
-        cl2.addWidget(self._dim("手机端需处于监听接收状态，并保证同一局域网"))
+        self.dim_listen_hint = self._dim(t("hint.listen"))
+        cl2.addWidget(self.dim_listen_hint)
         lay.addWidget(card2)
         lay.addStretch(1)
         return page
@@ -673,7 +682,8 @@ class MainWindow(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
 
         card, cl = self._card()
-        cl.addWidget(self._title("推送音量"))
+        self.title_volume = self._title(t("volume.title"))
+        cl.addWidget(self.title_volume)
         big = QLabel("100%")
         big.setStyleSheet(f"font-size: 44px; font-weight: 700; color: {ACCENT};")
         cl.addWidget(big)
@@ -682,7 +692,8 @@ class MainWindow(QWidget):
         slider.setValue(int(float(self.cfg.get("volume", 1.0)) * 100))
         slider.valueChanged.connect(self._on_volume)
         cl.addWidget(slider)
-        cl.addWidget(self._dim("作用于推送音频增益，0 为静音；超过 100% 会被软限幅保护"))
+        self.dim_volume = self._dim(t("volume.desc"))
+        cl.addWidget(self.dim_volume)
         self.big_volume_label = big
         self.page_volume_slider = slider
         lay.addWidget(card)
@@ -695,23 +706,25 @@ class MainWindow(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
 
         card, cl = self._card()
-        cl.addWidget(self._title("采集来源"))
+        self.title_capture = self._title(t("capture.title"))
+        cl.addWidget(self.title_capture)
         self.combo_device = QComboBox()
         self.combo_device.currentIndexChanged.connect(self._on_device_changed)
         cl.addWidget(self.combo_device)
 
         row = QHBoxLayout()
-        btn_refresh = RippleButton("刷新设备")
-        btn_refresh.setObjectName("ghost")
-        btn_refresh.setCursor(Qt.PointingHandCursor)
-        btn_refresh.clicked.connect(self._reload_devices)
-        row.addWidget(btn_refresh)
+        self.btn_refresh = RippleButton(t("btn.refresh"))
+        self.btn_refresh.setObjectName("ghost")
+        self.btn_refresh.setCursor(Qt.PointingHandCursor)
+        self.btn_refresh.clicked.connect(self._reload_devices)
+        row.addWidget(self.btn_refresh)
         row.addStretch(1)
         cl.addLayout(row)
 
-        cl.addWidget(self._dim("推荐选择虚拟声卡的录制端（如 Virtual Audio Cable、VoiceMeeter），"
-                               "并把 Windows 播放输出指向该虚拟声卡"))
-        cl.addWidget(self._dim("格式　48000 Hz / 立体声 / Opus 20ms 帧 / 64 kbps"))
+        self.dim_capture1 = self._dim(t("capture.tip1"))
+        cl.addWidget(self.dim_capture1)
+        self.dim_capture2 = self._dim(t("capture.tip2"))
+        cl.addWidget(self.dim_capture2)
         lay.addWidget(card)
         lay.addStretch(1)
         self._reload_devices()
@@ -723,7 +736,8 @@ class MainWindow(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
 
         card, cl = self._card()
-        cl.addWidget(self._title("运行日志"))
+        self.title_log = self._title(t("log.title"))
+        cl.addWidget(self.title_log)
         self.log_view = QPlainTextEdit()
         self.log_view.setReadOnly(True)
         self.log_view.setMinimumHeight(420)
@@ -737,45 +751,68 @@ class MainWindow(QWidget):
         lay.setContentsMargins(0, 0, 0, 0)
 
         card, cl = self._card()
-        cl.addWidget(self._title("启动与托盘"))
-        self.chk_show = QCheckBox("启动时显示主窗口")
+        self.title_startup = self._title(t("settings.startup"))
+        cl.addWidget(self.title_startup)
+        self.chk_show = QCheckBox(t("chk.show"))
         self.chk_show.setChecked(bool(self.cfg.get("show_window_on_start", True)))
         self.chk_show.stateChanged.connect(self._save_settings)
         cl.addWidget(self.chk_show)
-        cl.addWidget(self._dim("关闭窗口时隐藏到托盘，程序继续推送；从托盘菜单可退出"))
+        self.dim_tray = self._dim(t("chk.tray_desc"))
+        cl.addWidget(self.dim_tray)
 
-        self.chk_motion = QCheckBox("减弱动态效果")
+        self.chk_motion = QCheckBox(t("chk.motion"))
         self.chk_motion.setChecked(bool(self.cfg.get("reduce_motion", False)))
         self.chk_motion.stateChanged.connect(self._save_settings)
         cl.addWidget(self.chk_motion)
-        cl.addWidget(self._dim("关闭页面淡入与入场动画，仅保留即时按压反馈；"
-                               "系统级「减少动画」开关同样生效"))
+        self.dim_motion = self._dim(t("settings.motion_desc"))
+        cl.addWidget(self.dim_motion)
         lay.addWidget(card)
 
         card2, cl2 = self._card()
-        cl2.addWidget(self._title("端口"))
-        cl2.addWidget(self._dim(f"TCP 音频　{self.cfg.get('tcp_port', 42101)}"))
-        cl2.addWidget(self._dim(f"UDP 发现　{self.cfg.get('discover_port', 42100)}"))
-        cl2.addWidget(self._dim("首次运行需在防火墙弹窗中允许专用网络"))
+        self.title_language = self._title(t("settings.language"))
+        cl2.addWidget(self.title_language)
+        self.combo_lang = QComboBox()
+        self._lang_codes = list(SUPPORTED)
+        for code in self._lang_codes:
+            self.combo_lang.addItem(LANGUAGE_NAMES.get(code, code), code)
+        current = normalize(self.cfg.get("language"))
+        pos = self.combo_lang.findData(current)
+        self.combo_lang.setCurrentIndex(pos if pos >= 0 else 0)
+        self.combo_lang.currentIndexChanged.connect(self._on_language_changed)
+        cl2.addWidget(self.combo_lang)
+        self.dim_lang = self._dim(t("lang.hint"))
+        cl2.addWidget(self.dim_lang)
         lay.addWidget(card2)
+
+        card3, cl3 = self._card()
+        self.title_ports = self._title(t("ports.title"))
+        cl3.addWidget(self.title_ports)
+        self.dim_tcp = self._dim(t("ports.tcp", port=self.cfg.get("tcp_port", 42101)))
+        cl3.addWidget(self.dim_tcp)
+        self.dim_udp = self._dim(t("ports.udp", port=self.cfg.get("discover_port", 42100)))
+        cl3.addWidget(self.dim_udp)
+        self.dim_fw = self._dim(t("ports.tip"))
+        cl3.addWidget(self.dim_fw)
+        lay.addWidget(card3)
         lay.addStretch(1)
         return page
 
     # ---------------- 托盘 ----------------
     def _build_tray(self) -> None:
         self.tray = QSystemTrayIcon(app_icon(), self)
-        self.tray.setToolTip("PhoneAudioSink　等待连接")
+        self.tray.setToolTip(t("tray.tip", status=t("status.idle")))
 
         menu = QMenu()
-        act_show = QAction("显示主窗口", menu)
-        act_show.triggered.connect(self._show_window)
-        menu.addAction(act_show)
+        self.act_show = QAction(t("tray.show"), menu)
+        self.act_show.triggered.connect(self._show_window)
+        menu.addAction(self.act_show)
         menu.addSeparator()
 
         vol_widget = QWidget()
         vlay = QVBoxLayout(vol_widget)
         vlay.setContentsMargins(16, 8, 16, 8)
-        vlay.addWidget(QLabel("推送音量"))
+        self.lbl_tray_volume = QLabel(t("tray.volume"))
+        vlay.addWidget(self.lbl_tray_volume)
         self.tray_slider = QSlider(Qt.Horizontal)
         self.tray_slider.setRange(0, 150)
         self.tray_slider.setValue(self.vol_slider.value())
@@ -787,13 +824,13 @@ class MainWindow(QWidget):
         menu.addAction(vol_action)
         menu.addSeparator()
 
-        self.act_connect = QAction("开始连接", menu)
+        self.act_connect = QAction(t("tray.start"), menu)
         self.act_connect.triggered.connect(self._toggle_engine)
         menu.addAction(self.act_connect)
 
-        act_exit = QAction("退出", menu)
-        act_exit.triggered.connect(self._quit)
-        menu.addAction(act_exit)
+        self.act_exit = QAction(t("tray.exit"), menu)
+        self.act_exit.triggered.connect(self._quit)
+        menu.addAction(self.act_exit)
 
         self.tray.setContextMenu(menu)
         self.tray.activated.connect(self._on_tray_activated)
@@ -879,11 +916,74 @@ class MainWindow(QWidget):
     def _choose_mode(self, mode: str) -> None:
         self.btn_mode_listen.setChecked(mode == "listen")
         self.btn_mode_connect.setChecked(mode == "connect")
-        self.mode_hint.setText(
-            "模式：等待手机连入" if mode == "listen" else "模式：直连手机"
-        )
+        self.mode_hint.setText(t("mode.listen") if mode == "listen" else t("mode.connect"))
         if mode == "connect":
             self.edit_ip.setFocus()
+
+    # ---------------- 语言 ----------------
+    def _on_language_changed(self, index: int) -> None:
+        code = self.combo_lang.itemData(index)
+        if not code or code == current_language():
+            return
+        set_language(code)
+        self.cfg["language"] = normalize(code)
+        save_config(self.cfg)
+        self._retranslate()
+
+    def _start_button_key(self) -> str:
+        if self.worker is not None and self.worker.is_alive():
+            return "btn.stop" if self.btn_start.isEnabled() else "btn.stopping"
+        return "btn.start"
+
+    def _retranslate(self) -> None:
+        """整窗重设文案：静态标签逐个刷，动态文本交给 _refresh。"""
+        for key, btn in zip(self._nav_keys, self.nav_buttons):
+            btn.setText(t(key))
+        self.lbl_side_volume.setText(t("sidebar.volume"))
+        self.mode_hint.setText(
+            t("mode.listen") if self.btn_mode_listen.isChecked() else t("mode.connect")
+        )
+
+        self.title_connect.setText(t("connect.title"))
+        self.btn_mode_listen.setText(t("btn.listen"))
+        self.btn_mode_connect.setText(t("btn.connect"))
+        self.edit_ip.setPlaceholderText(t("placeholder.ip"))
+        self.btn_start.setText(t(self._start_button_key()))
+        self.dim_listen_hint.setText(t("hint.listen"))
+
+        self.title_volume.setText(t("volume.title"))
+        self.dim_volume.setText(t("volume.desc"))
+
+        self.title_capture.setText(t("capture.title"))
+        self.btn_refresh.setText(t("btn.refresh"))
+        self.dim_capture1.setText(t("capture.tip1"))
+        self.dim_capture2.setText(t("capture.tip2"))
+
+        self.title_log.setText(t("log.title"))
+
+        self.title_startup.setText(t("settings.startup"))
+        self.chk_show.setText(t("chk.show"))
+        self.dim_tray.setText(t("chk.tray_desc"))
+        self.chk_motion.setText(t("chk.motion"))
+        self.dim_motion.setText(t("settings.motion_desc"))
+        self.title_language.setText(t("settings.language"))
+        self.dim_lang.setText(t("lang.hint"))
+        self.title_ports.setText(t("ports.title"))
+        self.dim_tcp.setText(t("ports.tcp", port=self.cfg.get("tcp_port", 42101)))
+        self.dim_udp.setText(t("ports.udp", port=self.cfg.get("discover_port", 42100)))
+        self.dim_fw.setText(t("ports.tip"))
+
+        self.act_show.setText(t("tray.show"))
+        self.lbl_tray_volume.setText(t("tray.volume"))
+        self.act_connect.setText(
+            t("tray.stop") if self.worker is not None and self.worker.is_alive()
+            else t("tray.start")
+        )
+        self.act_exit.setText(t("tray.exit"))
+
+        # 设备下拉里的"默认设备"也要跟着换
+        self._reload_devices()
+        self._refresh()
 
     def _on_volume(self, value: int) -> None:
         self.state.set_gain(value / 100.0)
@@ -905,7 +1005,7 @@ class MainWindow(QWidget):
         self.combo_device.blockSignals(True)
         try:
             self.combo_device.clear()
-            self.combo_device.addItem("默认设备", "")
+            self.combo_device.addItem(t("device.default"), "")
             try:
                 for _idx, name in list_input_devices():
                     self.combo_device.addItem(name, name)
@@ -934,10 +1034,10 @@ class MainWindow(QWidget):
         host = self.edit_ip.text().strip()
         if mode == "connect":
             if not host:
-                self._ip_error("请输入手机 IP 后再开始")
+                self._ip_error(t("err.ip_required"))
                 return
             if not IPV4.match(host):
-                self._ip_error("IP 格式不正确，示例 192.168.1.50")
+                self._ip_error(t("err.ip_invalid"))
                 return
             self._set_ip_state("ok")
             self.cfg["last_phone_ip"] = host
@@ -948,10 +1048,10 @@ class MainWindow(QWidget):
         self.worker.start()
         self._hint = ""
         self.btn_start.setEnabled(True)
-        self.btn_start.setText("停止")
-        self.act_connect.setText("停止连接")
+        self.btn_start.setText(t("btn.stop"))
+        self.act_connect.setText(t("tray.stop"))
         self.lbl_detail.setText(
-            "正在监听，等待手机连入" if mode == "listen" else f"正在连接 {host}"
+            t("detail.listening") if mode == "listen" else t("detail.connecting", host=host)
         )
 
     def _ip_error(self, message: str) -> None:
@@ -973,7 +1073,7 @@ class MainWindow(QWidget):
         if self.stop_event is not None:
             self.stop_event.set()
         self.btn_start.setEnabled(False)
-        self.btn_start.setText("停止中")
+        self.btn_start.setText(t("btn.stopping"))
         self._poll_stopped()
 
     def _poll_stopped(self) -> None:
@@ -985,9 +1085,9 @@ class MainWindow(QWidget):
         self.stop_event = None
         self.state.set_status("idle", client_addr="", last_error="")
         self.btn_start.setEnabled(True)
-        self.btn_start.setText("开始")
-        self.act_connect.setText("开始连接")
-        self.lbl_status.setText("已停止")
+        self.btn_start.setText(t("btn.start"))
+        self.act_connect.setText(t("tray.start"))
+        self.lbl_status.setText(t("status.stopped"))
         self.lbl_status.setStyleSheet(
             f"font-size: 26px; font-weight: 700; color: {TEXT_DIM};"
         )
@@ -1002,11 +1102,11 @@ class MainWindow(QWidget):
 
         # 未运行时固定显示"已停止"，避免状态机残留 STOPPING/旧对端信息
         if self.worker is None or not self.worker.is_alive():
-            self.lbl_status.setText("已停止")
+            self.lbl_status.setText(t("status.stopped"))
             self.lbl_status.setStyleSheet(
                 f"font-size: 26px; font-weight: 700; color: {TEXT_DIM};"
             )
-            self.lbl_detail.setText(self._hint or "点击开始重新推流")
+            self.lbl_detail.setText(self._hint or t("detail.click_start"))
             self.lbl_detail.setStyleSheet(f"color: {TEXT_DIM}; font-size: 12px;")
             self._update_common(snap)
             return
@@ -1017,15 +1117,15 @@ class MainWindow(QWidget):
             f"{ {'connected': OK, 'error': ERR}.get(status, TEXT) };"
         )
         detail = snap["last_error"] if status == "error" and snap["last_error"] else ""
-        peer = snap["client_addr"] or ("未连接" if status != "error" else "")
-        self.lbl_detail.setText(detail or f"对端　{peer}")
+        peer = snap["client_addr"] or (t("peer.none") if status != "error" else "")
+        self.lbl_detail.setText(detail or t("detail.peer", peer=peer))
         if detail:
             self.lbl_detail.setStyleSheet(f"color: {ERR}; font-size: 12px;")
         else:
             self.lbl_detail.setStyleSheet(f"color: {TEXT_DIM}; font-size: 12px;")
         self._update_common(snap)
 
-        self.tray.setToolTip(f"PhoneAudioSink　{snap['status_text']}")
+        self.tray.setToolTip(t("tray.tip", status=snap["status_text"]))
 
         # 连接中才显示进度条：给"正在拨号"一个可见的等待状态
         busy_connecting = snap["mode"] == "connect" and status != "connected"
@@ -1041,11 +1141,12 @@ class MainWindow(QWidget):
                 )
 
     def _update_common(self, snap: dict) -> None:
-        self.lbl_ip.setText(f"本机 IP　{snap['local_ip']}　·　采集 {snap['device_name']}")
+        self.lbl_ip.setText(t("detail.ip_device", ip=snap["local_ip"], device=snap["device_name"]))
         size = snap["bytes_sent"]
         human = f"{size / 1024:.1f} KB" if size < 1024 * 1024 else f"{size / 1048576:.1f} MB"
         self.lbl_stats.setText(
-            f"已发送 {snap['frames_sent']} 帧 · {human} · 采集丢块 {snap['dropped_blocks']}"
+            t("detail.stats", frames=snap["frames_sent"], size=human,
+              dropped=snap["dropped_blocks"])
         )
 
     def _save_settings(self) -> None:
@@ -1076,7 +1177,7 @@ class MainWindow(QWidget):
         event.ignore()
         self.hide()
         if not self.cfg.get("_tray_hint_shown"):
-            self.tray.showMessage("PhoneAudioSink", "已隐藏到托盘，程序继续推送音频")
+            self.tray.showMessage(t("tray.hidden_title"), t("tray.hidden"))
             self.cfg["_tray_hint_shown"] = True
             save_config(self.cfg)
 

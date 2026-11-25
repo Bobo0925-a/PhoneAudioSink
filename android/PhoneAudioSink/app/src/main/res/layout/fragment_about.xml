@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="关于"
+            android:text="@string/about_title"
             android:textColor="@color/text"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="把电脑声音通过局域网推送到手机播放，内置低延迟音频处理。"
+                    android:text="@string/about_desc"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -63,7 +63,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="传输  TCP 42101　发现  UDP 42100"
+                    android:text="@string/about_transport"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -71,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="编码  Opus 48kHz 立体声 20ms 帧"
+                    android:text="@string/about_codec"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="音效  App 内 DSP，不经过系统音效链"
+                    android:text="@string/about_effects"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -103,7 +103,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="使用步骤"
+                    android:text="@string/about_steps_title"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -112,7 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="1  电脑端启动托盘程序，允许防火墙访问"
+                    android:text="@string/about_step1"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -120,7 +120,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="2  手机与电脑连接同一 WiFi"
+                    android:text="@string/about_step2"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
 
@@ -128,7 +128,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="3  在播放页扫描电脑，或手动输入 IP 连接"
+                    android:text="@string/about_step3"
                     android:textColor="@color/text_dim"
                     android:textSize="13sp" />
             </LinearLayout>

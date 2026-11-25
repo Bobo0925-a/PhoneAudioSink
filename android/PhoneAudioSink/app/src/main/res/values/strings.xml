@@ -1,4 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PhoneAudioSink</string>
+
+    <!-- 底部 Tab -->
+    <string name="tab_play">播放</string>
+    <string name="tab_effects">音效</string>
+    <string name="tab_settings">设置</string>
+    <string name="tab_about">关于</string>
+
+    <!-- 播放页 -->
+    <string name="play_mode_client">连接电脑</string>
+    <string name="play_mode_server">等待电脑连接</string>
+    <string name="play_status_idle">未连接</string>
+    <string name="play_sub_idle">等待扫描或手动输入 IP</string>
+    <string name="play_format_pending">格式 待协商</string>
+    <string name="play_buffer_none">缓冲 -</string>
+    <string name="play_frames_zero">收到 0 帧</string>
+    <string name="play_btn_scan">扫描电脑</string>
+    <string name="play_btn_disconnect">断开</string>
+    <string name="play_loading_scan">正在扫描局域网 ...</string>
+    <string name="play_manual_title">手动连接</string>
+    <string name="play_ip_hint">电脑 IP，如 192.168.1.50</string>
+    <string name="play_btn_connect">连接</string>
+    <string name="play_last_ip_none">上次连接 -</string>
+    <string name="play_last_ip">上次连接 %1$s</string>
+    <string name="play_servers_title">可用电脑</string>
+    <string name="play_server_mode_tip">手机将监听端口 42101，等待电脑直连</string>
+    <string name="play_waiting">正在等待电脑连接 ...</string>
+    <string name="play_btn_wait_start">开始等待</string>
+    <string name="play_btn_waiting">正在等待</string>
+    <string name="play_btn_scanning">扫描中</string>
+    <string name="play_ip_required">请输入电脑 IP 地址</string>
+    <string name="play_ip_invalid">IP 格式不正确，示例 192.168.1.50</string>
+    <string name="play_connecting">正在连接 %1$s ...</string>
+    <string name="play_btn_connecting">连接中</string>
+    <string name="play_state_connected">已连接</string>
+    <string name="play_state_waiting">等待电脑</string>
+    <string name="play_state_scanning">扫描中</string>
+    <string name="play_state_error">连接异常</string>
+    <string name="play_state_idle">未连接</string>
+    <string name="play_buffer_ms">缓冲 %1$d ms</string>
+    <string name="play_frames_received">收到 %1$d 帧</string>
+    <string name="play_dropped"> · 追平丢弃 %1$d 块</string>
+    <string name="play_no_servers">未发现电脑，请确认 PC 端已运行并放行防火墙</string>
+    <string name="play_servers_found">发现 %1$d 台电脑，点击列表连接</string>
+
+    <!-- 音效页 -->
+    <string name="effects_title">音效</string>
+    <string name="effects_preset_title">场景预设</string>
+    <string name="effects_save">保存当前</string>
+    <string name="effects_reset">重置</string>
+    <string name="effects_eq_title">图示均衡</string>
+    <string name="effects_eq_hint">上下拖动频柱调节，范围 -12 ~ +12 dB</string>
+    <string name="effects_eq_saved">已保存当前音效参数</string>
+    <string name="effects_virtual_bass">虚拟低音</string>
+    <string name="effects_bass_boost">低频增强</string>
+    <string name="effects_gain_title">输出增益</string>
+    <string name="effects_gain_tip">增益超过 0 dB 时自动启用软限幅，防止破音</string>
+
+    <!-- 场景预设 -->
+    <string name="preset_custom">自定义</string>
+    <string name="preset_electronic">电子音乐</string>
+    <string name="preset_vocal">人声</string>
+    <string name="preset_clear">清脆</string>
+    <string name="preset_strings">弦乐</string>
+
+    <!-- 设置页 -->
+    <string name="settings_title">设置</string>
+    <string name="settings_buffer_title">缓冲档位</string>
+    <string name="settings_buffer_desc">越低越实时，越高越抗抖动</string>
+    <string name="settings_buffer_120">当前 120 ms（低延迟，弱网易爆音）</string>
+    <string name="settings_buffer_250">当前 250 ms（平衡）</string>
+    <string name="settings_buffer_400">当前 400 ms（抗抖动，延迟略高）</string>
+    <string name="buffer_label_120">120 低延迟</string>
+    <string name="buffer_label_250">250 平衡</string>
+    <string name="buffer_label_400">400 抗抖动</string>
+    <string name="settings_light">浅色模式</string>
+    <string name="settings_light_desc">深色为默认主题</string>
+    <string name="settings_auto">自动重连</string>
+    <string name="settings_heartbeat">链路心跳保活</string>
+    <string name="settings_heartbeat_desc">6 秒无数据自动断开，避免僵死连接持续堆积音频</string>
+    <string name="settings_reduce_motion">减弱动态效果</string>
+    <string name="settings_reduce_motion_desc">关闭入场与转场动画，仅保留即时反馈</string>
+    <string name="settings_restore">恢复默认设置</string>
+    <string name="settings_language_title">语言</string>
+    <string name="settings_language_desc">界面语言，切换后立即生效</string>
+    <string name="lang_system">跟随系统</string>
+    <string name="lang_zh">简体中文</string>
+    <string name="lang_en">English</string>
+
+    <!-- 关于页 -->
+    <string name="about_title">关于</string>
+    <string name="about_version">PhoneAudioSink %1$s</string>
+    <string name="about_desc">把电脑声音通过局域网推送到手机播放，内置低延迟音频处理。</string>
+    <string name="about_transport">传输  TCP 42101　发现  UDP 42100</string>
+    <string name="about_codec">编码  Opus 48kHz 立体声 20ms 帧</string>
+    <string name="about_effects">音效  App 内 DSP，不经过系统音效链</string>
+    <string name="about_steps_title">使用步骤</string>
+    <string name="about_step1">1  电脑端启动托盘程序，允许防火墙访问</string>
+    <string name="about_step2">2  手机与电脑连接同一 WiFi</string>
+    <string name="about_step3">3  在播放页扫描电脑，或手动输入 IP 连接</string>
+
+    <!-- 网络状态 -->
+    <string name="net_connected">已连接 %1$s:%2$d</string>
+    <string name="net_connect_failed">连接失败: %1$s</string>
+    <string name="net_unreachable">网络不可达</string>
+    <string name="net_disconnected">连接已断开</string>
+    <string name="net_listening">等待电脑连接 · 端口 %1$d</string>
+    <string name="net_pc_joined">电脑已接入 %1$s</string>
+    <string name="net_listen_failed">监听失败: %1$s</string>
+    <string name="net_port_busy">端口被占用</string>
+    <string name="net_listen_stopped">监听已停止</string>
+    <string name="net_timeout">链路超时，请重连</string>
+    <string name="state_disconnected">已断开</string>
+    <string name="format_detail">格式 %1$dHz · %2$d声道 · Opus · %3$d 帧 · %4$dkbps</string>
 </resources>

@@ -12,20 +12,29 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import androidx.appcompat.widget.SwitchCompat
 
-/** 设置页：缓冲档位、主题、自动重连、链路心跳、恢复默认。 */
+/** 设置页：缓冲档位、语言、主题、自动重连、链路心跳、恢复默认。 */
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private lateinit var tierRow: LinearLayout
     private lateinit var hint: TextView
+    private lateinit var languageRow: LinearLayout
     private val tierButtons = mutableListOf<MaterialButton>()
+    private val languageButtons = mutableListOf<MaterialButton>()
+
+    private val languageTags = arrayOf("", "zh", "en")
+    private val languageLabelRes = intArrayOf(
+        R.string.lang_system, R.string.lang_zh, R.string.lang_en,
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         tierRow = view.findViewById(R.id.bufferTierRow)
         hint = view.findViewById(R.id.tvBufferTierHint)
+        languageRow = view.findViewById(R.id.languageRow)
 
         buildTiers()
+        buildLanguages()
 
         val swLight = view.findViewById<SwitchCompat>(R.id.swLight)
         val swAuto = view.findViewById<SwitchCompat>(R.id.swAutoReconnect)
@@ -72,7 +81,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         val dp = resources.displayMetrics.density
         AppSettings.BUFFER_TIERS.forEachIndexed { index, ms ->
             val btn = MaterialButton(requireContext()).apply {
-                text = AppSettings.BUFFER_LABELS[index]
+                text = AppSettings.bufferLabels()[index]
                 isAllCaps = false
                 textSize = 12f
                 gravity = Gravity.CENTER
@@ -107,9 +116,52 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 ColorStateList.valueOf(if (selected) accent else surface)
         }
         hint.text = when (AppSettings.bufferMs) {
-            120 -> "当前 120 ms（低延迟，弱网易爆音）"
-            400 -> "当前 400 ms（抗抖动，延迟略高）"
-            else -> "当前 250 ms（平衡）"
+            120 -> getString(R.string.settings_buffer_120)
+            400 -> getString(R.string.settings_buffer_400)
+            else -> getString(R.string.settings_buffer_250)
+        }
+    }
+
+    // ---- 语言切换：跟随系统 / 简体中文 / English ----
+    private fun buildLanguages() {
+        languageRow.removeAllViews()
+        languageButtons.clear()
+        val dp = resources.displayMetrics.density
+        languageTags.forEachIndexed { index, tag ->
+            val btn = MaterialButton(requireContext()).apply {
+                text = getString(languageLabelRes[index])
+                isAllCaps = false
+                textSize = 12f
+                gravity = Gravity.CENTER
+                cornerRadius = (16 * dp).toInt()
+                minWidth = 0
+                minimumWidth = 0
+                insetTop = 0
+                insetBottom = 0
+                setPadding(0, 0, 0, 0)
+                layoutParams = LinearLayout.LayoutParams(0, (48 * dp).toInt(), 1f).apply {
+                    if (index > 0) marginStart = (8 * dp).toInt()
+                }
+                setOnClickListener {
+                    AppSettings.setLanguage(tag)
+                    // 语言要重建 Activity 才会重新解析资源
+                    activity?.recreate()
+                }
+            }
+            Motion.pressable(btn)
+            languageButtons.add(btn)
+            languageRow.addView(btn)
+        }
+        refreshLanguages()
+    }
+
+    private fun refreshLanguages() {
+        val accent = ContextCompat.getColor(requireContext(), R.color.accent)
+        val surface = ContextCompat.getColor(requireContext(), R.color.surface3)
+        languageTags.forEachIndexed { index, tag ->
+            val selected = tag == AppSettings.language
+            languageButtons.getOrNull(index)?.backgroundTintList =
+                ColorStateList.valueOf(if (selected) accent else surface)
         }
     }
 }
