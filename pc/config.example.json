@@ -1,0 +1,13 @@
+{
+  "tcp_port": 42101,
+  "discover_port": 42100,
+
+  "sample_rate": 48000,
+  "channels": 2,
+  "codec": 1,
+  "frame_size": 960,
+  "bitrate": 64000,
+
+  "input_device": "",
+  "ping_interval_sec": 5.0
+}

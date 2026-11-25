@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# 构建产物（PC / Android 通用）
+dist/
+build/
+.gradle/
+*.exe
+*.apk
+*.aab
+*.iml
+local.properties
+
+# PC 本地配置与日志（含本机设备名，不入库）
+pc/config.json
+config.json
+*.log
+
+# 交付压缩包
+PhoneAudioSink.zip
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+.DS_Store

@@ -1,0 +1,9 @@
+# PC 端运行依赖
+sounddevice>=0.4.6
+numpy>=1.26
+opuslib-next-bundled>=0.1.1
+pystray>=0.19.5
+pillow>=10.0
+
+# 仅打包 exe 时需要（运行时不需要）：
+#   pyinstaller>=6.0

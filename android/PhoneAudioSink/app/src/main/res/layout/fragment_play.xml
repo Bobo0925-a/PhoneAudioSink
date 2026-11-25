@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="播放"
+            android:textColor="@color/text"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:paddingStart="4dp"
+            android:paddingBottom="14dp" />
+
+        <LinearLayout
+            android:id="@+id/modeRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeClient"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="连接电脑"
+                android:textAllCaps="false"
+                android:textColor="@color/text"
+                android:backgroundTint="@color/accent"
+                app:cornerRadius="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnModeServer"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="等待电脑连接"
+                android:textAllCaps="false"
+                android:textColor="@color/text_dim"
+                android:backgroundTint="@color/surface3"
+                app:cornerRadius="16dp" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="22dp">
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="未连接"
+                    android:textColor="@color/text"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvSubStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="等待扫描或手动输入 IP"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="14dp"
+                    android:background="@color/divider" />
+
+                <TextView
+                    android:id="@+id/tvFormat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="格式 待协商"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvBuffer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="缓冲 -"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="收到 0 帧"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/actionRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnScan"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="扫描电脑"
+                android:textAllCaps="false"
+                android:textColor="@color/text"
+                android:backgroundTint="@color/accent"
+                app:cornerRadius="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDisconnect"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="断开"
+                android:textAllCaps="false"
+                android:textColor="@color/text"
+                android:backgroundTint="@color/surface3"
+                app:cornerRadius="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actionLoading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/accent" />
+
+            <TextView
+                android:id="@+id/tvActionLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="正在扫描局域网 ..."
+                android:textColor="@color/text_dim"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardManual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="手动连接"
+                    android:textColor="@color/text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <EditText
+                        android:id="@+id/etIp"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/field_bg"
+                        android:hint="电脑 IP，如 192.168.1.50"
+                        android:inputType="text"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:singleLine="true"
+                        android:textColor="@color/text"
+                        android:textColorHint="@color/text_dim"
+                        android:textSize="14sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnConnectIp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="52dp"
+                        android:layout_marginStart="10dp"
+                        android:text="连接"
+                        android:textAllCaps="false"
+                        android:textColor="@color/text"
+                        android:backgroundTint="@color/accent"
+                        app:cornerRadius="16dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvLastIp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="上次连接 -"
+                    android:textColor="@color/text_dim"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvServerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="8dp"
+            android:paddingStart="4dp"
+            android:text="可用电脑"
+            android:textColor="@color/text_dim"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:id="@+id/skeletonList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/skeleton_block" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/skeleton_block" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/skeleton_block" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/serverList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</ScrollView>
