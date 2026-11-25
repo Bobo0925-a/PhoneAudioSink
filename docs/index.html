@@ -8,9 +8,9 @@
 <meta name="theme-color" content="#0d0f13">
 <meta property="og:title" content="PhoneAudioSink · 电脑出声，手机接着">
 <meta property="og:description" content="Windows 系统声音经 Opus 实时编码，局域网直推安卓播放。">
-<meta property="og:image" content="assets/icon.png">
+<meta property="og:image" content="https://bobo0925-a.github.io/PhoneAudioSink/assets/icon.png">
 <meta property="og:type" content="website">
-<link rel="icon" href="favicon.png">
+<link rel="icon" href="https://bobo0925-a.github.io/PhoneAudioSink/favicon.png">
 <style>
 :root {
   --bg: #0d0f13;
@@ -150,6 +150,31 @@ figcaption { margin: 14px 2px 0; color: var(--muted-2); font-size: 13px; }
   padding: 10px;
 }
 .phone img { border-radius: 12px; }
+
+/* 图片骨架屏：加载前显示灰色微光占位，加载完成淡入 */
+.media { position: relative; }
+.media .skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(100deg, var(--surface) 40%, #1d2530 50%, var(--surface) 60%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s linear infinite;
+}
+@keyframes shimmer {
+  from { background-position: 180% 0; }
+  to   { background-position: -20% 0; }
+}
+.media img { opacity: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 200ms ease-out; }
+.media.loaded img { opacity: 1; }
+.media.loaded .skeleton { display: none; }
+.frame.media { aspect-ratio: 1400 / 640; }
+.phone .media { border-radius: 12px; overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .media .skeleton { animation: none; }
+  .media img { transition: none; }
+}
 
 .note { margin: 18px 2px 0; color: var(--muted-2); font-size: 13px; }
 
@@ -291,7 +316,7 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="#top">
-      <img src="assets/icon.png" alt="" width="30" height="30">
+      <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/icon.png" alt="" width="30" height="30" loading="eager">
       <span>PhoneAudioSink</span>
     </a>
     <nav class="nav-links">
@@ -330,18 +355,25 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
   <section id="screens" class="showcase">
     <div class="wrap">
       <figure class="device-pc">
-        <div class="frame">
-          <img src="assets/pc.png" alt="PhoneAudioSink 桌面端等待连接页" loading="lazy">
+        <div class="frame media">
+          <div class="skeleton"></div>
+          <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/pc.png" alt="PhoneAudioSink 桌面端等待连接页" loading="lazy">
         </div>
         <figcaption>等待连接页：本机 IP、采集设备、已发帧数和丢块数都在一张卡片上。</figcaption>
       </figure>
       <div class="phones">
         <figure class="phone">
-          <img src="assets/android-play.png" alt="安卓端播放页" loading="lazy">
+          <div class="media" style="aspect-ratio: 1100 / 688;">
+            <div class="skeleton"></div>
+            <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/android-play.png" alt="安卓端播放页" loading="lazy">
+          </div>
           <figcaption>播放页：未连接 / 监听已停止，状态写在卡片里。</figcaption>
         </figure>
         <figure class="phone">
-          <img src="assets/android-effects.png" alt="安卓端音效页" loading="lazy">
+          <div class="media" style="aspect-ratio: 1100 / 688;">
+            <div class="skeleton"></div>
+            <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/android-effects.png" alt="安卓端音效页" loading="lazy">
+          </div>
           <figcaption>音效页：7 段图示均衡、虚拟低音、低频增强。</figcaption>
         </figure>
       </div>
@@ -446,7 +478,10 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
   <section class="cta-end">
     <div class="wrap">
       <div class="cta-panel">
-        <img src="assets/icon.png" alt="" width="52" height="52">
+        <div class="media" style="aspect-ratio: 1 / 1; width: 52px; margin: 0 auto 16px;">
+          <div class="skeleton"></div>
+          <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/icon.png" alt="" width="52" height="52">
+        </div>
         <h2>同一 Wi-Fi 下试一次</h2>
         <p>电脑开桌面端，手机装 APK 点开始等待，几秒就连上。</p>
         <div class="cta-row">
@@ -507,6 +542,19 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
     } else {
       done(fallbackCopy(REPO));
     }
+  });
+})();
+
+// 骨架屏：图片加载完成（或失败）后移除占位、淡入图片
+(function () {
+  var boxes = document.querySelectorAll(".media");
+  boxes.forEach(function (box) {
+    var img = box.querySelector("img");
+    if (!img) return;
+    function reveal() { box.classList.add("loaded"); }
+    if (img.complete && img.naturalWidth > 0) { reveal(); return; }
+    img.addEventListener("load", reveal);
+    img.addEventListener("error", reveal);
   });
 })();
 </script>
