@@ -22,6 +22,9 @@ config.json
 # 交付压缩包
 PhoneAudioSink.zip
 
+# 官网本地草稿与预览截图（正式素材在 docs/assets）
+site/
+
 # 编辑器
 .vscode/
 .idea/
