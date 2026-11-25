@@ -13,6 +13,8 @@ build/
 *.aab
 *.iml
 local.properties
+*.keystore
+*.jks
 
 # PC 本地配置与日志（含本机设备名，不入库）
 pc/config.json

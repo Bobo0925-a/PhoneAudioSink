@@ -101,14 +101,17 @@ new-chat-1/
 
 ### 2. 安装手机 App
 
-根目录 `PhoneAudioSink-debug.apk`（4.4 MB，含 arm64-v8a / armeabi-v7a / x86 / x86_64）
+从 [Releases](https://github.com/Bobo0925-a/PhoneAudioSink/releases) 下载
+`PhoneAudioSink-android.apk`（Android 7.0+，release 签名包），
 传到手机安装，允许「安装未知来源应用」。
 
 ### 3. 启动 PC 端（二选一）
 
-#### 方式 A：exe 图形界面版（推荐，免装 Python）
+#### 方式 A：安装包图形界面版（推荐，免装 Python）
 
-根目录 `PhoneAudioSink.exe` 双击运行，弹出无边框大圆角主窗口，同时常驻系统托盘。
+从 [Releases](https://github.com/Bobo0925-a/PhoneAudioSink/releases) 下载
+`PhoneAudioSink-windows-setup-v1.0.0.exe`，按当前用户安装（不需要管理员权限），
+开始菜单或桌面快捷方式启动；弹出无边框大圆角主窗口，同时常驻系统托盘。
 首次启动若弹出 Windows 防火墙提示，**勾选专用网络并允许访问**。
 
 - 主窗口：左侧汉堡侧边栏切换「连接 / 音量 / 采集设备 / 日志 / 设置」，侧边栏底部常驻音量滑块。
@@ -303,6 +306,19 @@ python -m PyInstaller --noconfirm --clean PhoneAudioSink.spec
   因此界面固定用 PyQt5，不要改回 PySide6。
 - 配置 `config.json` 与日志 `phone_audio.log` 不打进包，运行时在 exe 同目录生成。
 
+### 打包 Windows 安装程序
+
+上面的 PyInstaller 产物是单文件便携版；发布用的安装器由 Inno Setup 6 再封装一层：
+
+```powershell
+# 先按上一步把 PhoneAudioSink.exe 放到仓库根目录
+& "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installers\phoneaudiosink.iss
+# 产物：installers\Output\PhoneAudioSink-setup-v1.0.0.exe
+```
+
+安装器按当前用户装到 `%LOCALAPPDATA%\Programs\PhoneAudioSink`，带开始菜单快捷方式、
+可选桌面图标与卸载项，不需要管理员权限。
+
 ---
 
 ## 八、本机开发环境记录（已装好）
@@ -329,8 +345,15 @@ $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
 $gradle = "$env:LOCALAPPDATA\Programs\Gradle\gradle-8.9\bin\gradle.bat"
 cd android\PhoneAudioSink
 & $gradle :app:assembleDebug
-# 产物：app\build\outputs\apk\debug\app-debug.apk
+# 调试产物：app\build\outputs\apk\debug\app-debug.apk
+& $gradle :app:assembleRelease
+# 发布产物：app\build\outputs\apk\release\app-release.apk
 ```
+
+Release 包用本机密钥库签名；凭据只写在 `local.properties`（已 gitignore），
+`release.keystore` 同样不入库。全新机器需自行生成 keystore，并在 `local.properties`
+填 `store.file` / `store.password` / `key.alias` / `key.password`；缺省时
+release 构建不挂签名配置，产物为未签名包。
 
 > 备注：JOpus 0.4.0 以 Kotlin 2.3 元数据编译，工程在 `app/build.gradle` 中通过
 > 排除其传递的 `kotlin-stdlib` 并加 `-Xskip-metadata-version-check` 与本机 Kotlin 1.9 工具链兼容。

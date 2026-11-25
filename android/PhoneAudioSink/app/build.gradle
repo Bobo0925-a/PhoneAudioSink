@@ -3,6 +3,13 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// 签名凭据只从本机 local.properties 读取，不入库
+def signingProps = new Properties()
+def signingPropsFile = rootProject.file("local.properties")
+if (signingPropsFile.exists()) {
+    signingProps.load(new FileInputStream(signingPropsFile))
+}
+
 android {
     namespace 'com.example.phoneaudiosink'
     compileSdk 34
@@ -15,10 +22,24 @@ android {
         versionName "1.0"
     }
 
+    signingConfigs {
+        release {
+            if (signingProps['store.file']) {
+                storeFile rootProject.file(signingProps['store.file'])
+                storePassword signingProps['store.password']
+                keyAlias signingProps['key.alias']
+                keyPassword signingProps['key.password']
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingProps['store.file']) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
