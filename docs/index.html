@@ -181,7 +181,7 @@ figcaption { margin: 14px 2px 0; color: var(--muted-2); font-size: 13px; }
 }
 
 /* 水波纹点击反馈 */
-.btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .nav-links a { position: relative; overflow: hidden; }
+.btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .dl-gh, .nav-links a { position: relative; overflow: hidden; }
 .ripple {
   position: absolute;
   border-radius: 50%;
@@ -410,7 +410,22 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   color: var(--accent);
 }
 
-.dl-note { margin: 16px 2px 0; color: var(--muted-2); font-size: 12.5px; line-height: 1.6; }
+.dl-note { margin: 16px 2px 0; color: var(--muted-2); font-size: 13px; line-height: 1.6; }
+
+.dl-gh-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.dl-gh {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  transition: border-color 120ms ease-out, background 120ms ease-out, color 120ms ease-out;
+}
+.dl-gh:hover { border-color: var(--accent); background: var(--accent-soft); }
 
 @media (max-width: 560px) {
   .dl-grid { grid-template-columns: 1fr; }
@@ -679,10 +694,11 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
         <span class="dl-tag">蓝奏云下载</span>
       </a>
     </div>
-    <p class="dl-note">蓝奏云页面需输入上方提取码；也可走 GitHub 直链：
-      <a id="dl-win-gh" href="#" target="_blank" rel="noopener">Windows</a> ·
-      <a id="dl-android-gh" href="#" target="_blank" rel="noopener">Android</a>
-    </p>
+    <p class="dl-note">蓝奏云页面需输入上方提取码；下载慢可改用 GitHub 直链。</p>
+    <div class="dl-gh-row">
+      <a class="dl-gh" id="dl-win-gh" href="#" target="_blank" rel="noopener">Windows 直链</a>
+      <a class="dl-gh" id="dl-android-gh" href="#" target="_blank" rel="noopener">Android 直链</a>
+    </div>
   </div>
 </div>
 
@@ -735,7 +751,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
   onScroll();
 
   // 水波纹：从触点向外扩散，结束后移除
-  var RIPPLE_SEL = ".btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .nav-links a";
+  var RIPPLE_SEL = ".btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .dl-gh, .nav-links a";
   document.addEventListener("click", function (e) {
     var target = e.target.closest ? e.target.closest(RIPPLE_SEL) : null;
     if (!target) return;
