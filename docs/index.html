@@ -274,6 +274,100 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
 .copy-btn[disabled] { cursor: default; opacity: 0.7; }
 .copy-state { color: var(--accent); font-size: 13px; }
 
+/* 下载弹窗 */
+.dl-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 160ms ease-out, visibility 160ms ease-out;
+}
+.dl-modal.open { visibility: visible; opacity: 1; }
+
+.dl-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(6px);
+}
+
+.dl-panel {
+  position: relative;
+  width: min(520px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 24px;
+  padding: 28px 24px 22px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  transform: translateY(12px) scale(0.98);
+  transition: transform 160ms ease-out;
+}
+.dl-modal.open .dl-panel { transform: translateY(0) scale(1); }
+
+.dl-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 120ms ease-out, color 120ms ease-out;
+}
+.dl-close:hover { border-color: var(--accent); color: var(--text); }
+
+.dl-panel h3 { margin: 0; font-size: 20px; font-weight: 620; }
+.dl-sub { margin: 6px 0 20px; color: var(--muted-2); font-size: 13.5px; }
+
+.dl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+.dl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+  transition: border-color 120ms ease-out, background 120ms ease-out;
+}
+.dl-card:hover { border-color: rgba(76, 141, 255, 0.4); background: var(--accent-soft); }
+
+.dl-card .dl-ico {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--accent-soft);
+}
+.dl-card .dl-ico svg { width: 22px; height: 22px; stroke: #a9c6ff; stroke-width: 1.6; fill: none; }
+.dl-card h4 { margin: 0; font-size: 15.5px; font-weight: 600; }
+.dl-card p { margin: 4px 0 0; color: var(--muted-2); font-size: 12.5px; line-height: 1.5; }
+.dl-card .dl-code { margin-top: 6px; color: var(--accent); font-weight: 600; }
+.dl-note a { color: var(--accent); }
+.dl-note a:hover { text-decoration: underline; }
+.dl-tag {
+  margin-top: auto;
+  align-self: flex-start;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.dl-note { margin: 16px 2px 0; color: var(--muted-2); font-size: 12.5px; line-height: 1.6; }
+
+@media (max-width: 560px) {
+  .dl-grid { grid-template-columns: 1fr; }
+}
+
 /* 结尾 */
 .cta-end { padding: 28px 0 88px; }
 
@@ -340,7 +434,7 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
         不投屏，不用虚拟声卡，本机扬声器照常出声。
       </p>
       <div class="cta-row">
-        <a class="btn primary" href="https://github.com/Bobo0925-a/PhoneAudioSink/releases" target="_blank" rel="noopener">获取安装包</a>
+        <button class="btn primary" type="button" data-open-download>获取安装包</button>
         <a class="btn ghost" href="https://github.com/Bobo0925-a/PhoneAudioSink" target="_blank" rel="noopener">看源码</a>
       </div>
       <ul class="chips">
@@ -485,7 +579,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
         <h2>同一 Wi-Fi 下试一次</h2>
         <p>电脑开桌面端，手机装 APK 点开始等待，几秒就连上。</p>
         <div class="cta-row">
-          <a class="btn primary" href="https://github.com/Bobo0925-a/PhoneAudioSink/releases" target="_blank" rel="noopener">前往 Releases</a>
+          <button class="btn primary" type="button" data-open-download>获取安装包</button>
           <a class="btn ghost" href="https://github.com/Bobo0925-a/PhoneAudioSink/blob/main/README.md" target="_blank" rel="noopener">读 README</a>
         </div>
       </div>
@@ -500,6 +594,39 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
     <a href="https://github.com/Bobo0925-a/PhoneAudioSink" target="_blank" rel="noopener">github.com/Bobo0925-a/PhoneAudioSink</a>
   </div>
 </footer>
+
+<div class="dl-modal" id="dl-modal" aria-hidden="true">
+  <div class="dl-mask" data-close-dl></div>
+  <div class="dl-panel" role="dialog" aria-modal="true" aria-labelledby="dl-title">
+    <button class="dl-close" type="button" data-close-dl aria-label="关闭">×</button>
+    <h3 id="dl-title">选择下载端</h3>
+    <p class="dl-sub">电脑和手机各装一端，接入同一 Wi-Fi 即可串流。</p>
+    <div class="dl-grid">
+      <a class="dl-card" id="dl-win" href="#" target="_blank" rel="noopener">
+        <div class="dl-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="13" height="9" rx="2"/><rect x="4" y="16" width="9" height="5" rx="2"/><path d="M17 9h4M19 9v8"/></svg></div>
+        <div>
+          <h4>Windows 电脑端</h4>
+          <p>安装程序 · 53.4 MB · Win10/11</p>
+          <p class="dl-code">提取码 7a08</p>
+        </div>
+        <span class="dl-tag">蓝奏云下载</span>
+      </a>
+      <a class="dl-card" id="dl-android" href="#" target="_blank" rel="noopener">
+        <div class="dl-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2M9 6h6"/></svg></div>
+        <div>
+          <h4>Android 手机端</h4>
+          <p>APK 安装包 · 5.9 MB · Android 8+</p>
+          <p class="dl-code">提取码 7db0</p>
+        </div>
+        <span class="dl-tag">蓝奏云下载</span>
+      </a>
+    </div>
+    <p class="dl-note">蓝奏云页面需输入上方提取码；也可走 GitHub 直链：
+      <a id="dl-win-gh" href="#" target="_blank" rel="noopener">Windows</a> ·
+      <a id="dl-android-gh" href="#" target="_blank" rel="noopener">Android</a>
+    </p>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -555,6 +682,65 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
     if (img.complete && img.naturalWidth > 0) { reveal(); return; }
     img.addEventListener("load", reveal);
     img.addEventListener("error", reveal);
+  });
+})();
+
+// 下载弹窗：选择 Windows / Android 端，走直链下载
+(function () {
+  // lan 为蓝奏云分享页（含提取码）；留空则回退 GitHub 直链
+  var DL_LINKS = {
+    win: {
+      github: "https://github.com/Bobo0925-a/PhoneAudioSink/releases/download/v1.0.0/PhoneAudioSink-windows-setup-v1.0.0.exe",
+      lan: { url: "https://wwbpv.lanzouu.com/izM0z4hdddfg", code: "7a08" }
+    },
+    android: {
+      github: "https://github.com/Bobo0925-a/PhoneAudioSink/releases/download/v1.0.0/PhoneAudioSink-android.apk",
+      lan: { url: "https://wwbpv.lanzouu.com/iyP1u4hddcni", code: "7db0" }
+    }
+  };
+
+  var modal = document.getElementById("dl-modal");
+  if (!modal) return;
+  var winCard = document.getElementById("dl-win");
+  var androidCard = document.getElementById("dl-android");
+  var openBtns = document.querySelectorAll("[data-open-download]");
+  var closeEls = modal.querySelectorAll("[data-close-dl]");
+  var lastTrigger = null;
+
+  function pick(key) { return DL_LINKS[key].lan ? DL_LINKS[key].lan.url : DL_LINKS[key].github; }
+  winCard.href = pick("win");
+  androidCard.href = pick("android");
+  document.getElementById("dl-win-gh").href = DL_LINKS.win.github;
+  document.getElementById("dl-android-gh").href = DL_LINKS.android.github;
+
+  function openModal(trigger) {
+    lastTrigger = trigger || null;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    var closeBtn = modal.querySelector(".dl-close");
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    if (lastTrigger) { lastTrigger.focus(); lastTrigger = null; }
+  }
+
+  openBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () { openModal(btn); });
+  });
+  closeEls.forEach(function (el) {
+    el.addEventListener("click", closeModal);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+  });
+
+  [winCard, androidCard].forEach(function (card) {
+    card.addEventListener("click", closeModal);
   });
 })();
 </script>
