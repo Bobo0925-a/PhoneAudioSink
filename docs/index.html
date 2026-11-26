@@ -26,7 +26,10 @@
 
 * { box-sizing: border-box; }
 
+html { scroll-behavior: smooth; }
 html, body { margin: 0; padding: 0; }
+
+.section, .showcase, .cta-end { scroll-margin-top: 76px; }
 
 body {
   background: var(--bg);
@@ -115,8 +118,9 @@ h1 {
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
-  transition: background 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out;
+  transition: background 120ms ease-out, border-color 120ms ease-out, color 120ms ease-out, transform 100ms ease-out;
 }
+.btn:active { transform: scale(0.97); }
 
 .btn.primary { background: var(--accent); color: #06121f; box-shadow: 0 8px 22px rgba(76, 141, 255, 0.22); }
 .btn.primary:hover { background: #5f99ff; }
@@ -174,6 +178,45 @@ figcaption { margin: 14px 2px 0; color: var(--muted-2); font-size: 13px; }
 @media (prefers-reduced-motion: reduce) {
   .media .skeleton { animation: none; }
   .media img { transition: none; }
+}
+
+/* 水波纹点击反馈 */
+.btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .nav-links a { position: relative; overflow: hidden; }
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0.24;
+  background: rgba(255, 255, 255, 0.24);
+  pointer-events: none;
+  animation: ripple 480ms ease-out forwards;
+}
+.btn.primary .ripple { background: rgba(255, 255, 255, 0.3); }
+@keyframes ripple {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* Hero 分批入场（仅在 body.anim-on 下初始隐藏，保证无 JS 时内容可见） */
+.anim-on .hero-inner > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 420ms ease-out, transform 420ms ease-out;
+}
+.anim-on .hero-inner > *.in { opacity: 1; transform: none; }
+
+/* 区块滚动入场：进入视口一次淡入上移 */
+.anim-on .reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 380ms ease-out, transform 380ms ease-out;
+}
+.anim-on .reveal.in { opacity: 1; transform: none; }
+
+/* 导航滚动后加深 */
+.nav { transition: background 300ms ease-out, box-shadow 300ms ease-out, border-color 300ms ease-out; }
+body.scrolled .nav {
+  background: rgba(13, 15, 19, 0.94);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
 }
 
 .note { margin: 18px 2px 0; color: var(--muted-2); font-size: 13px; }
@@ -284,7 +327,7 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   padding: 24px;
   visibility: hidden;
   opacity: 0;
-  transition: opacity 160ms ease-out, visibility 160ms ease-out;
+  transition: opacity 250ms ease-out, visibility 250ms ease-out;
 }
 .dl-modal.open { visibility: visible; opacity: 1; }
 
@@ -303,10 +346,15 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   border-radius: 24px;
   padding: 28px 24px 22px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
-  transform: translateY(12px) scale(0.98);
-  transition: transform 160ms ease-out;
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
 }
-.dl-modal.open .dl-panel { transform: translateY(0) scale(1); }
+.dl-modal.open .dl-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
 
 .dl-close {
   position: absolute;
@@ -403,6 +451,16 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
   .spec-row { grid-template-columns: 1fr; gap: 4px; }
   .foot-inner { flex-direction: column; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .anim-on .hero-inner > *, .anim-on .reveal { opacity: 1 !important; transform: none !important; }
+}
 </style>
 </head>
 <body>
@@ -448,7 +506,7 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
 
   <section id="screens" class="showcase">
     <div class="wrap">
-      <figure class="device-pc">
+      <figure class="device-pc reveal">
         <div class="frame media">
           <div class="skeleton"></div>
           <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/pc.png" alt="PhoneAudioSink 桌面端等待连接页" loading="lazy">
@@ -456,14 +514,14 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
         <figcaption>等待连接页：本机 IP、采集设备、已发帧数和丢块数都在一张卡片上。</figcaption>
       </figure>
       <div class="phones">
-        <figure class="phone">
+        <figure class="phone reveal">
           <div class="media" style="aspect-ratio: 1100 / 688;">
             <div class="skeleton"></div>
             <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/android-play.png" alt="安卓端播放页" loading="lazy">
           </div>
           <figcaption>播放页：未连接 / 监听已停止，状态写在卡片里。</figcaption>
         </figure>
-        <figure class="phone">
+        <figure class="phone reveal">
           <div class="media" style="aspect-ratio: 1100 / 688;">
             <div class="skeleton"></div>
             <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/android-effects.png" alt="安卓端音效页" loading="lazy">
@@ -477,42 +535,42 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
 
   <section id="features" class="section">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>这条链子上做了什么</h2>
         <p>采集、编码、发现、播放，每段只解决一件事。</p>
       </div>
       <div class="grid">
-        <article class="card span-7">
+        <article class="card reveal span-7">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v3a8 8 0 0 0 16 0v3"/><rect x="2" y="9" width="4" height="6" rx="2"/><rect x="18" y="9" width="4" height="6" rx="2"/></svg></div>
           <h3>系统声音直采</h3>
           <p>取 Windows 默认播放设备，不用装虚拟声卡；本机耳机、扬声器不受影响，播什么送什么。</p>
         </article>
-        <article class="card span-5">
+        <article class="card reveal span-5">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h3l3-7 4 14 3-7h5"/></svg></div>
           <h3>实时 Opus</h3>
           <p>48kHz、双声道、960 样本一帧（20ms），64kbps。帧短包小，链路抖动更容易压住。</p>
         </article>
-        <article class="card span-5">
+        <article class="card reveal span-5">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M7 7a7 7 0 0 0 0 10M17 7a7 7 0 0 1 0 10M4 4a11 11 0 0 0 0 16M20 4a11 11 0 0 1 0 16"/></svg></div>
           <h3>自动发现</h3>
           <p>UDP 42100 广播一问一答，电脑名直接进列表；扫不到再手输手机 IP 直连。</p>
         </article>
-        <article class="card span-7">
+        <article class="card reveal span-7">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="13" height="9" rx="2"/><rect x="4" y="16" width="9" height="5" rx="2"/><path d="M17 9h4M19 9v8"/></svg></div>
           <h3>两端一套设计</h3>
           <p>同一枚图标、同一套蓝。桌面汉堡侧栏，安卓底部四页；圆角和间距按各自平台走，不强行照搬。</p>
         </article>
-        <article class="card span-4">
+        <article class="card reveal span-4">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 12l6-3"/><path d="M4 12h3M17 12h3M12 4v3"/></svg></div>
           <h3>帧率自适应</h3>
           <p>波纹和按压按刷新率排帧，120Hz 约 8ms 一帧；设置里可关减弱动态效果。</p>
         </article>
-        <article class="card span-4">
+        <article class="card reveal span-4">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5v8l-9 5-9-5v-8z"/><path d="M12 12l9-4M12 12v9M12 12L3 8"/></svg></div>
           <h3>状态兜底</h3>
           <p>未连接、监听已停止、掉线、采集丢块都有对应显示；发现不到时手输 IP 即可连上。</p>
         </article>
-        <article class="card span-4">
+        <article class="card reveal span-4">
           <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7z"/><path d="M9 7V4h6v3M9 17v3h6v-3M4 10v4M20 10v4"/></svg></div>
           <h3>MIT 开源</h3>
           <p>两端源码、协议字段、图标生成脚本和自检工具都在仓库，可改可二开。</p>
@@ -523,11 +581,11 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
 
   <section id="protocol" class="section">
     <div class="wrap split">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>协议就一个六字节头</h2>
         <p>两个端口、五种类型，二进制定长头，读源码五分钟能看完。</p>
       </div>
-      <div class="spec-table">
+      <div class="spec-table reveal">
         <div class="spec-row"><span>魔术字</span><b>0xAA 0x55</b></div>
         <div class="spec-row"><span>版本</span><b>2</b></div>
         <div class="spec-row"><span>类型</span><b>HELLO 01 · AUDIO 02 · PING 03 · PONG 04 · BYE 05</b></div>
@@ -541,12 +599,12 @@ footer { border-top: 1px solid var(--line); padding: 24px 0 38px; }
 
   <section id="build" class="section">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>从源码跑起来</h2>
         <p>桌面 PyQt5，安卓 Kotlin + 原生 AudioTrack，不依赖特殊硬件。</p>
       </div>
       <div class="code-grid">
-        <div class="code-card">
+        <div class="code-card reveal">
           <h3>桌面端</h3>
           <pre><code>git clone https://github.com/Bobo0925-a/PhoneAudioSink
 cd PhoneAudioSink/pc
@@ -554,7 +612,7 @@ pip install -r requirements.txt
 python desktop.py</code></pre>
           <p>单文件打包：<code>python -m PyInstaller PhoneAudioSink.spec</code>。</p>
         </div>
-        <div class="code-card">
+        <div class="code-card reveal">
           <h3>安卓端</h3>
           <pre><code>cd android/PhoneAudioSink
 gradle assembleDebug
@@ -571,7 +629,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
 
   <section class="cta-end">
     <div class="wrap">
-      <div class="cta-panel">
+      <div class="cta-panel reveal">
         <div class="media" style="aspect-ratio: 1 / 1; width: 52px; margin: 0 auto 16px;">
           <div class="skeleton"></div>
           <img src="https://bobo0925-a.github.io/PhoneAudioSink/assets/icon.png" alt="" width="52" height="52">
@@ -629,6 +687,73 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
 </div>
 
 <script>
+// 动效：减弱动态检测、Hero 分批入场、区块滚动淡入、导航滚动态、水波纹
+(function () {
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return; // 系统要求减弱动态：保持静态，不挂任何动画
+
+  document.body.classList.add("anim-on");
+
+  // Hero 按行块分批入场
+  var heroInner = document.querySelector(".hero-inner");
+  if (heroInner) {
+    var kids = Array.prototype.slice.call(heroInner.children);
+    requestAnimationFrame(function () {
+      kids.forEach(function (el, i) {
+        el.style.transitionDelay = (i * 70) + "ms";
+        requestAnimationFrame(function () { el.classList.add("in"); });
+      });
+    });
+  }
+
+  // 区块滚动入场：进入视口一次后淡入上移，同组依次错开
+  var reveals = document.querySelectorAll(".reveal");
+  function showAll() { reveals.forEach(function (el) { el.classList.add("in"); }); }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var siblings = Array.prototype.slice.call(el.parentElement.children)
+          .filter(function (n) { return n.classList && n.classList.contains("reveal"); });
+        var idx = Math.max(0, siblings.indexOf(el));
+        el.style.transitionDelay = Math.min(idx, 3) * 70 + "ms";
+        el.classList.add("in");
+        io.unobserve(el);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    showAll();
+  }
+
+  // 导航滚动后加深
+  function onScroll() {
+    document.body.classList.toggle("scrolled", window.scrollY > 8);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // 水波纹：从触点向外扩散，结束后移除
+  var RIPPLE_SEL = ".btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .nav-links a";
+  document.addEventListener("click", function (e) {
+    var target = e.target.closest ? e.target.closest(RIPPLE_SEL) : null;
+    if (!target) return;
+    var rect = target.getBoundingClientRect();
+    var size = Math.max(rect.width, rect.height) * 2;
+    var cx = e.clientX || rect.left + rect.width / 2;
+    var cy = e.clientY || rect.top + rect.height / 2;
+    var rip = document.createElement("span");
+    rip.className = "ripple";
+    rip.style.width = rip.style.height = size + "px";
+    rip.style.left = (cx - rect.left - size / 2) + "px";
+    rip.style.top = (cy - rect.top - size / 2) + "px";
+    target.appendChild(rip);
+    rip.addEventListener("animationend", function () { if (rip.parentNode) rip.parentNode.removeChild(rip); });
+    setTimeout(function () { if (rip.parentNode) rip.parentNode.removeChild(rip); }, 520);
+  });
+})();
+
 (function () {
   var REPO = "https://github.com/Bobo0925-a/PhoneAudioSink";
   var btn = document.getElementById("clone-copy");
