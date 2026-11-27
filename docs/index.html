@@ -5,14 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PhoneAudioSink · 电脑出声，手机接着</title>
 <meta name="description" content="PC 采集 Windows 系统声音，Opus 编码后经局域网推到安卓播放。开源 MIT。">
-<meta name="theme-color" content="#0d0f13">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0d0f13" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f8fb" media="(prefers-color-scheme: light)">
 <meta property="og:title" content="PhoneAudioSink · 电脑出声，手机接着">
 <meta property="og:description" content="Windows 系统声音经 Opus 实时编码，局域网直推安卓播放。">
 <meta property="og:image" content="https://bobo0925-a.github.io/PhoneAudioSink/assets/icon.png">
 <meta property="og:type" content="website">
 <link rel="icon" href="https://bobo0925-a.github.io/PhoneAudioSink/favicon.png">
 <style>
+/* 默认深色；系统为浅色时下面 @media 里整套变量切换 */
 :root {
+  color-scheme: dark;
   --bg: #0d0f13;
   --surface: #141a22;
   --line: rgba(255, 255, 255, 0.08);
@@ -22,6 +26,65 @@
   --muted-2: #6f7e94;
   --accent: #4c8dff;
   --accent-soft: rgba(76, 141, 255, 0.14);
+
+  --nav-bg: rgba(13, 15, 19, 0.82);
+  --nav-bg-scrolled: rgba(13, 15, 19, 0.94);
+  --nav-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --hero-grad: linear-gradient(180deg, #11151b 0%, var(--bg) 76%);
+  --cta-grad: linear-gradient(180deg, #161d26 0%, #11151b 100%);
+  --skeleton-mid: #1d2530;
+  --code-bg: #0b0e12;
+  --code-text: #bcd0ea;
+  --code-inline: #9fbbdd;
+  --spec-strong: #cfe0ff;
+  --icon-stroke: #a9c6ff;
+  --primary-fg: #06121f;
+  --primary-hover: #5f99ff;
+  --primary-shadow: 0 8px 22px rgba(76, 141, 255, 0.22);
+  --frame-filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
+  --mask: rgba(0, 0, 0, 0.62);
+  --panel-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  --card-hover: rgba(76, 141, 255, 0.32);
+  --dl-card-hover: rgba(76, 141, 255, 0.4);
+  --ripple: rgba(255, 255, 255, 0.24);
+  --ripple-primary: rgba(255, 255, 255, 0.3);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --line: rgba(16, 24, 40, 0.09);
+    --line-strong: rgba(16, 24, 40, 0.18);
+    --text: #101826;
+    --muted: #4b5768;
+    --muted-2: #667085;
+    --accent: #2563eb;
+    --accent-soft: rgba(37, 99, 235, 0.09);
+
+    --nav-bg: rgba(246, 248, 251, 0.82);
+    --nav-bg-scrolled: rgba(246, 248, 251, 0.95);
+    --nav-shadow: 0 6px 20px rgba(16, 24, 40, 0.1);
+    --hero-grad: linear-gradient(180deg, #eef2f9 0%, var(--bg) 76%);
+    --cta-grad: linear-gradient(180deg, #f1f5fb 0%, #e9eef7 100%);
+    --skeleton-mid: #e3e8f1;
+    --code-bg: #f2f5fa;
+    --code-text: #24344d;
+    --code-inline: #1d4ed8;
+    --spec-strong: #1c3f72;
+    --icon-stroke: #2f6fe0;
+    --primary-fg: #ffffff;
+    --primary-hover: #1d4ed8;
+    --primary-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+    --frame-filter: drop-shadow(0 24px 48px rgba(16, 24, 40, 0.16));
+    --mask: rgba(16, 24, 40, 0.45);
+    --panel-shadow: 0 30px 70px rgba(16, 24, 40, 0.18);
+    --card-hover: rgba(37, 99, 235, 0.35);
+    --dl-card-hover: rgba(37, 99, 235, 0.45);
+    --ripple: rgba(16, 24, 40, 0.14);
+    --ripple-primary: rgba(255, 255, 255, 0.42);
+  }
 }
 
 * { box-sizing: border-box; }
@@ -50,7 +113,7 @@ a { color: inherit; text-decoration: none; }
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(13, 15, 19, 0.82);
+  background: var(--nav-bg);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
 }
@@ -72,6 +135,8 @@ a { color: inherit; text-decoration: none; }
 .nav-links a:hover { color: var(--text); }
 
 .nav-cta {
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   padding: 7px 14px;
@@ -83,7 +148,7 @@ a { color: inherit; text-decoration: none; }
 /* Hero */
 .hero {
   padding: 84px 0 52px;
-  background: linear-gradient(180deg, #11151b 0%, var(--bg) 76%);
+  background: var(--hero-grad);
 }
 
 .eyebrow {
@@ -122,8 +187,8 @@ h1 {
 }
 .btn:active { transform: scale(0.97); }
 
-.btn.primary { background: var(--accent); color: #06121f; box-shadow: 0 8px 22px rgba(76, 141, 255, 0.22); }
-.btn.primary:hover { background: #5f99ff; }
+.btn.primary { background: var(--accent); color: var(--primary-fg); box-shadow: var(--primary-shadow); }
+.btn.primary:hover { background: var(--primary-hover); }
 .btn.ghost { border: 1px solid var(--line-strong); color: var(--text); }
 .btn.ghost:hover { border-color: var(--accent); }
 
@@ -139,7 +204,7 @@ h1 {
 
 .frame {
   border-radius: 24px;
-  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
+  filter: var(--frame-filter);
 }
 
 figure { margin: 0; }
@@ -161,7 +226,7 @@ figcaption { margin: 14px 2px 0; color: var(--muted-2); font-size: 13px; }
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(100deg, var(--surface) 40%, #1d2530 50%, var(--surface) 60%);
+  background: linear-gradient(100deg, var(--surface) 40%, var(--skeleton-mid) 50%, var(--surface) 60%);
   background-size: 200% 100%;
   animation: shimmer 1.3s linear infinite;
 }
@@ -180,20 +245,21 @@ figcaption { margin: 14px 2px 0; color: var(--muted-2); font-size: 13px; }
   .media img { transition: none; }
 }
 
-/* 水波纹点击反馈 */
-.btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .dl-gh, .nav-links a { position: relative; overflow: hidden; }
+/* 水波纹点击反馈：所有按钮与链接（JS 统一挂 .rip-host） */
+.rip-host { position: relative; overflow: hidden; }
 .ripple {
   position: absolute;
   border-radius: 50%;
   transform: scale(0);
-  opacity: 0.24;
-  background: rgba(255, 255, 255, 0.24);
+  opacity: 1;
+  background: var(--ripple);
   pointer-events: none;
   animation: ripple 480ms ease-out forwards;
 }
-.btn.primary .ripple { background: rgba(255, 255, 255, 0.3); }
+.btn.primary .ripple { background: var(--ripple-primary); }
 @keyframes ripple {
-  to { transform: scale(1); opacity: 0; }
+  from { transform: scale(0); opacity: 1; }
+  to   { transform: scale(1); opacity: 0; }
 }
 
 /* Hero 分批入场（仅在 body.anim-on 下初始隐藏，保证无 JS 时内容可见） */
@@ -215,8 +281,8 @@ figcaption { margin: 14px 2px 0; color: var(--muted-2); font-size: 13px; }
 /* 导航滚动后加深 */
 .nav { transition: background 300ms ease-out, box-shadow 300ms ease-out, border-color 300ms ease-out; }
 body.scrolled .nav {
-  background: rgba(13, 15, 19, 0.94);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  background: var(--nav-bg-scrolled);
+  box-shadow: var(--nav-shadow);
 }
 
 .note { margin: 18px 2px 0; color: var(--muted-2); font-size: 13px; }
@@ -241,7 +307,7 @@ h2 { margin: 0; font-size: clamp(25px, 2.8vw, 32px); font-weight: 620; letter-sp
   padding: 22px;
   transition: border-color 120ms ease-out;
 }
-.card:hover { border-color: rgba(76, 141, 255, 0.32); }
+.card:hover { border-color: var(--card-hover); }
 
 .ico {
   width: 40px; height: 40px;
@@ -250,7 +316,7 @@ h2 { margin: 0; font-size: clamp(25px, 2.8vw, 32px); font-weight: 620; letter-sp
   background: var(--accent-soft);
   margin-bottom: 16px;
 }
-.ico svg { width: 21px; height: 21px; stroke: #a9c6ff; stroke-width: 1.6; fill: none; }
+.ico svg { width: 21px; height: 21px; stroke: var(--icon-stroke); stroke-width: 1.6; fill: none; }
 
 .card h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
 .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
@@ -270,7 +336,7 @@ h2 { margin: 0; font-size: clamp(25px, 2.8vw, 32px); font-weight: 620; letter-sp
 }
 .spec-row:last-child { border-bottom: 0; }
 .spec-row span { color: var(--muted-2); }
-.spec-row b { font-weight: 500; color: #cfe0ff; word-break: break-word; }
+.spec-row b { font-weight: 500; color: var(--spec-strong); word-break: break-word; }
 
 /* 构建 */
 .code-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
@@ -287,15 +353,15 @@ pre {
   margin: 0;
   padding: 15px 16px;
   border-radius: 12px;
-  background: #0b0e12;
+  background: var(--code-bg);
   border: 1px solid var(--line);
   overflow-x: auto;
   font-size: 13px;
   line-height: 1.75;
 }
-code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color: #bcd0ea; }
+code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color: var(--code-text); }
 .code-card p { margin: 14px 0 0; color: var(--muted-2); font-size: 13.5px; }
-.code-card p code { color: #9fbbdd; }
+.code-card p code { color: var(--code-inline); }
 
 .copy-btn {
   margin-top: 20px;
@@ -334,7 +400,7 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
 .dl-mask {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.62);
+  background: var(--mask);
   backdrop-filter: blur(6px);
 }
 
@@ -345,7 +411,7 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   border: 1px solid var(--line-strong);
   border-radius: 24px;
   padding: 28px 24px 22px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--panel-shadow);
   opacity: 0;
   transform: translateY(12px) scale(0.96);
   transition: opacity 200ms ease-out, transform 200ms ease-out;
@@ -388,7 +454,7 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   background: var(--bg);
   transition: border-color 120ms ease-out, background 120ms ease-out;
 }
-.dl-card:hover { border-color: rgba(76, 141, 255, 0.4); background: var(--accent-soft); }
+.dl-card:hover { border-color: var(--dl-card-hover); background: var(--accent-soft); }
 
 .dl-card .dl-ico {
   width: 42px; height: 42px;
@@ -396,7 +462,7 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   display: grid; place-items: center;
   background: var(--accent-soft);
 }
-.dl-card .dl-ico svg { width: 22px; height: 22px; stroke: #a9c6ff; stroke-width: 1.6; fill: none; }
+.dl-card .dl-ico svg { width: 22px; height: 22px; stroke: var(--icon-stroke); stroke-width: 1.6; fill: none; }
 .dl-card h4 { margin: 0; font-size: 15.5px; font-weight: 600; }
 .dl-card p { margin: 4px 0 0; color: var(--muted-2); font-size: 12.5px; line-height: 1.5; }
 .dl-card .dl-code { margin-top: 6px; color: var(--accent); font-weight: 600; }
@@ -439,7 +505,7 @@ code { font-family: "Cascadia Code", "Consolas", ui-monospace, monospace; color:
   padding: 52px 28px;
   border: 1px solid var(--line-strong);
   border-radius: 24px;
-  background: linear-gradient(180deg, #161d26 0%, #11151b 100%);
+  background: var(--cta-grad);
 }
 .cta-panel img { margin: 0 auto 16px; }
 .cta-panel h2 { font-size: clamp(23px, 2.4vw, 29px); }
@@ -750,10 +816,14 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  // 水波纹：从触点向外扩散，结束后移除
-  var RIPPLE_SEL = ".btn, .nav-cta, .copy-btn, .dl-card, .dl-close, .dl-gh, .nav-links a";
+  // 水波纹：所有按钮和链接一律挂载，从触点向外扩散，结束后移除
+  var hosts = document.querySelectorAll("button, a[href], [role='button']");
+  Array.prototype.forEach.call(hosts, function (el) {
+    el.classList.add("rip-host");
+  });
+
   document.addEventListener("click", function (e) {
-    var target = e.target.closest ? e.target.closest(RIPPLE_SEL) : null;
+    var target = e.target.closest ? e.target.closest(".rip-host") : null;
     if (!target) return;
     var rect = target.getBoundingClientRect();
     var size = Math.max(rect.width, rect.height) * 2;
@@ -793,7 +863,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk</code></pre>
 
   function flash(msg, ok) {
     state.textContent = msg;
-    state.style.color = ok ? "#4c8dff" : "#e07070";
+    state.style.color = ok ? "" : "#d64545";
     btn.disabled = true;
     clearTimeout(resetTimer);
     resetTimer = setTimeout(function () {
