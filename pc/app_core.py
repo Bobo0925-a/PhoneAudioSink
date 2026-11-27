@@ -48,7 +48,7 @@ DEFAULT_CONFIG = {
     "sample_rate": 48000,
     "channels": 2,
     "codec": 1,
-    "frame_size": 960,
+    "frame_size": 480,
     "bitrate": 64000,
     "input_device": "",
     "ping_interval_sec": 1.5,
