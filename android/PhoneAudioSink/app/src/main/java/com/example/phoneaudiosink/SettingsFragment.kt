@@ -116,6 +116,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 ColorStateList.valueOf(if (selected) accent else surface)
         }
         hint.text = when (AppSettings.bufferMs) {
+            60 -> getString(R.string.settings_buffer_60)
             120 -> getString(R.string.settings_buffer_120)
             400 -> getString(R.string.settings_buffer_400)
             else -> getString(R.string.settings_buffer_250)
