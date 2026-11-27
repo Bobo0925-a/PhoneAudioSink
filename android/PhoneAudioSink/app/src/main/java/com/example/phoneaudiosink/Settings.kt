@@ -152,14 +152,15 @@ object AppSettings {
     private const val KEY_REDUCE_MOTION = "reduce_motion"
     private const val KEY_LANGUAGE = "language"
 
-    val BUFFER_TIERS = intArrayOf(120, 250, 400)
+    val BUFFER_TIERS = intArrayOf(60, 120, 250, 400)
     private val BUFFER_RES = intArrayOf(
-        R.string.buffer_label_120, R.string.buffer_label_250, R.string.buffer_label_400,
+        R.string.buffer_label_60, R.string.buffer_label_120,
+        R.string.buffer_label_250, R.string.buffer_label_400,
     )
 
     fun bufferLabels(): Array<String> = BUFFER_RES.map { Str.s(it) }.toTypedArray()
 
-    @Volatile var bufferMs = 250
+    @Volatile var bufferMs = 60
         private set
     @Volatile var lightMode = false
         private set
@@ -180,7 +181,7 @@ object AppSettings {
         private set
 
     fun load() {
-        bufferMs = prefs.getInt(KEY_BUFFER_MS, 250)
+        bufferMs = prefs.getInt(KEY_BUFFER_MS, 60)
         lightMode = prefs.getBoolean(KEY_LIGHT, false)
         autoReconnect = prefs.getBoolean(KEY_AUTO_RECONNECT, true)
         heartbeat = prefs.getBoolean(KEY_HEARTBEAT, true)
@@ -231,7 +232,7 @@ object AppSettings {
     }
 
     fun resetAll() {
-        setBufferMs(250)
+        setBufferMs(60)
         setLightMode(false)
         setAutoReconnect(true)
         setHeartbeat(true)
