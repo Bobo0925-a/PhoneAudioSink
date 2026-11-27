@@ -69,9 +69,11 @@
     <string name="settings_title">设置</string>
     <string name="settings_buffer_title">缓冲档位</string>
     <string name="settings_buffer_desc">越低越实时，越高越抗抖动</string>
-    <string name="settings_buffer_120">当前 120 ms（低延迟，弱网易爆音）</string>
+    <string name="settings_buffer_60">当前 60 ms（极速，Wi-Fi 需干净）</string>
+    <string name="settings_buffer_120">当前 120 ms（低延迟）</string>
     <string name="settings_buffer_250">当前 250 ms（平衡）</string>
     <string name="settings_buffer_400">当前 400 ms（抗抖动，延迟略高）</string>
+    <string name="buffer_label_60">60 极速</string>
     <string name="buffer_label_120">120 低延迟</string>
     <string name="buffer_label_250">250 平衡</string>
     <string name="buffer_label_400">400 抗抖动</string>
