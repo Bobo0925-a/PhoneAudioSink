@@ -43,8 +43,8 @@ class AudioCapture:
     """从指定输入设备持续采集 int16 PCM，块数据推入队列。"""
 
     def __init__(self, sample_rate: int, channels: int, blocksize: int,
-                 device=None, max_queue: int = 4) -> None:
-        # 激进档：队列上限 4 块 ≈ 80ms（20ms/块）；积压即丢最旧块，优先保实时。
+                 device=None, max_queue: int = 3) -> None:
+        # 激进档：队列上限 3 块（10ms/块 ≈ 30ms，20ms/块 ≈ 60ms）；积压即丢最旧块，优先保实时。
         self.sample_rate = sample_rate
         self.channels = channels
         self.blocksize = blocksize
