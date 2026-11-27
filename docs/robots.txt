@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bobo0925-a.github.io/PhoneAudioSink/sitemap.xml
