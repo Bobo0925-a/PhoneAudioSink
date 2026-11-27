@@ -69,9 +69,11 @@
     <string name="settings_title">Settings</string>
     <string name="settings_buffer_title">Buffer size</string>
     <string name="settings_buffer_desc">Lower is more immediate, higher resists jitter</string>
-    <string name="settings_buffer_120">Current 120 ms (low latency, prone to crackle on weak Wi-Fi)</string>
+    <string name="settings_buffer_60">Current 60 ms (fastest, needs clean Wi-Fi)</string>
+    <string name="settings_buffer_120">Current 120 ms (low latency)</string>
     <string name="settings_buffer_250">Current 250 ms (balanced)</string>
     <string name="settings_buffer_400">Current 400 ms (jitter resistant, slightly higher latency)</string>
+    <string name="buffer_label_60">60 fast</string>
     <string name="buffer_label_120">120 low</string>
     <string name="buffer_label_250">250 balanced</string>
     <string name="buffer_label_400">400 stable</string>
